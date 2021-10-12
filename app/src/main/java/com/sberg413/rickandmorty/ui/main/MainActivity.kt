@@ -1,13 +1,12 @@
-package com.sberg413.rickandmorty
+package com.sberg413.rickandmorty.ui.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
-import com.sberg413.rickandmorty.ui.main.MainViewModel
-import com.sberg413.rickandmorty.ui.main.MainViewModelFactory
 import com.sberg413.rickandmorty.ui.models.Character
 
 class MainActivity : AppCompatActivity() {
@@ -25,8 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        val viewModel = ViewModelProvider(this, MainViewModelFactory(this))
-            .get(MainViewModel::class.java)
+        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         viewModel.getData().observe(this,
             { t ->
                 listCharacters.clear()

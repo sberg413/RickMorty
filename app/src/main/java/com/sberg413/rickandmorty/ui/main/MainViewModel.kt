@@ -1,13 +1,11 @@
 package com.sberg413.rickandmorty.ui.main
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.models.CharacterList
-import com.sberg413.rickandmorty.utils.isInternetAvailable
+import com.sberg413.rickandmorty.repository.CharacterRepository
 
-class MainViewModel(private val context: Context) : ViewModel() {
+class MainViewModel : ViewModel() {
 
     private var listData = MutableLiveData<CharacterList>()
 
@@ -15,9 +13,7 @@ class MainViewModel(private val context: Context) : ViewModel() {
         val characterRepository : CharacterRepository by lazy {
             CharacterRepository()
         }
-        if(isInternetAvailable(context)) {
-            listData = characterRepository.getCharacterListLiveData(context)
-        }
+        listData = characterRepository.getCharacterListLiveData()
     }
 
     fun getData() : MutableLiveData<CharacterList> {

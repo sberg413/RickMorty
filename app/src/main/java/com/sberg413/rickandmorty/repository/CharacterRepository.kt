@@ -13,11 +13,9 @@ import retrofit2.Response
 
 class CharacterRepository {
 
-    fun getCharacterListLiveData(context: Context) : MutableLiveData<CharacterList> {
+    fun getCharacterListLiveData() : MutableLiveData<CharacterList> {
 
         val mutableLiveData = MutableLiveData<CharacterList>()
-
-        // context.showProgressBar()
 
         ApiClient.apiService.getCharacterList().enqueue(object :
             Callback<CharacterList> {
@@ -30,7 +28,6 @@ class CharacterRepository {
                 call: Call<CharacterList>,
                 response: Response<CharacterList>
             ) {
-                // hideProgressBar()
                 val characterList = response.body()
                 Log.d(TAG, characterList.toString())
                 characterList?.let { mutableLiveData.value = it }
