@@ -4,8 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.ui.models.Character
 
@@ -27,24 +30,25 @@ class CharacterAdapter(private val context: Context, private var list: List<Char
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val character = list[position]
         holder.name?.text = character.name
-        holder.info1?.text = character?.name + " | " + character?.gender
-        holder.info2?.text = character?.species + " | " + character?.status
-        // val addressObj = character.addressObject
-        // holder.address?.text = addressObj?.suite + "," + addressObj?.street + "," + addressObj?.city + "," + addressObj?.zipCode
+        holder.species?.text = character?.species + " | " + character?.status
+
+        holder.image?.let {
+            Glide.with(holder.itemView)
+                .load(character.image)
+                .transform(CircleCrop())
+                .into(it)
+        }
     }
 
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
+        var image: ImageView? = null
         var name: TextView? = null
-        var info1: TextView? = null
-        var info2: TextView? = null
-        var address: TextView? = null
+        var species: TextView? = null
 
         init {
-            name = view.findViewById(R.id.txt_user_name)
-            info1 = view.findViewById(R.id.txt_user_info1)
-            info2 = view.findViewById(R.id.txt_user_info2)
-            address = view.findViewById(R.id.txt_user_address)
+            image = view.findViewById(R.id.image)
+            name = view.findViewById(R.id.name)
+            species = view.findViewById(R.id.species_and_status)
         }
 
     }
