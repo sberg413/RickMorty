@@ -33,6 +33,7 @@ class CharacterAdapter(private val context: Context, private var list: List<Char
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val character = list[position]
         holder.name?.text = character.name
+        holder.status?.text = character.status
         holder.species?.text = character.species
         holder.itemView.tag = character.id
 
@@ -47,11 +48,13 @@ class CharacterAdapter(private val context: Context, private var list: List<Char
     class MyViewHolder(view: View) : RecyclerView.ViewHolder(view),  View.OnClickListener {
         var image: ImageView? = null
         var name: TextView? = null
+        var status: TextView? = null
         var species: TextView? = null
 
         init {
             image = view.findViewById(R.id.image)
             name = view.findViewById(R.id.name)
+            status = view.findViewById(R.id.status)
             species = view.findViewById(R.id.species)
             view.isClickable = true
             view.setOnClickListener(this)

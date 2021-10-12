@@ -24,8 +24,13 @@ class DetailActivity: AppCompatActivity() {
             viewModel.characterData.observe(this,
                 {
                     Log.d("DetailActivity", "Detail Live Data = $it")
-                    binding.viewmodel = viewModel
+                    viewModel.updateLocation(it.location.url, this)
                 })
+
+            binding.viewmodel = viewModel
+            binding.lifecycleOwner = this
+            binding.executePendingBindings()
         }
+
     }
 }
