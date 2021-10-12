@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
-import com.sberg413.rickandmorty.ui.models.Character
+import com.sberg413.rickandmorty.models.Character
 
 class MainActivity : AppCompatActivity() {
 

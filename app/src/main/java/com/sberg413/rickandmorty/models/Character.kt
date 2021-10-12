@@ -1,4 +1,4 @@
-package com.sberg413.rickandmorty.ui.models
+package com.sberg413.rickandmorty.models
 
 data class Character(
     val id: Int,
@@ -6,6 +6,8 @@ data class Character(
     val species: String,
     val type: String,
     val gender: String,
+    val origin: Origin,
+    val location: Location,
     val image: String,
     val name: String,
     val url: String,

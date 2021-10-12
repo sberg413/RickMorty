@@ -1,7 +1,7 @@
 package com.sberg413.rickandmorty.api
 
 import com.sberg413.rickandmorty.models.CharacterList
-import com.sberg413.rickandmorty.ui.models.Character
+import com.sberg413.rickandmorty.models.Character
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path

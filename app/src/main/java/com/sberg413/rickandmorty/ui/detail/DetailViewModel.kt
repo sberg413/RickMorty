@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.sberg413.rickandmorty.repository.CharacterRepository
-import com.sberg413.rickandmorty.ui.models.Character
+import com.sberg413.rickandmorty.models.Character
 
 class DetailViewModel(id: String): ViewModel() {
 

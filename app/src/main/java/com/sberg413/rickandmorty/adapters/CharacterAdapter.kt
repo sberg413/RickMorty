@@ -11,18 +11,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.sberg413.rickandmorty.R
-import com.sberg413.rickandmorty.ui.models.Character
-import androidx.core.content.ContextCompat.startActivity
+import com.sberg413.rickandmorty.models.Character
 
 import android.content.Intent
-import androidx.core.content.ContextCompat
 import com.sberg413.rickandmorty.ui.detail.DetailActivity
 
 
 class CharacterAdapter(private val context: Context, private var list: List<Character>) :
     RecyclerView.Adapter<CharacterAdapter.MyViewHolder>() {
-
-    // private val  = characterList.results
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(context)
@@ -37,7 +33,7 @@ class CharacterAdapter(private val context: Context, private var list: List<Char
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val character = list[position]
         holder.name?.text = character.name
-        holder.species?.text = character?.species + " | " + character?.status
+        holder.species?.text = character.species
         holder.itemView.tag = character.id
 
         holder.image?.let {
@@ -56,7 +52,7 @@ class CharacterAdapter(private val context: Context, private var list: List<Char
         init {
             image = view.findViewById(R.id.image)
             name = view.findViewById(R.id.name)
-            species = view.findViewById(R.id.species_and_status)
+            species = view.findViewById(R.id.species)
             view.isClickable = true
             view.setOnClickListener(this)
         }

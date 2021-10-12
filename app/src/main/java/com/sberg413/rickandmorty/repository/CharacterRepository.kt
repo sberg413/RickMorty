@@ -1,12 +1,11 @@
 package com.sberg413.rickandmorty.repository
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.sberg413.rickandmorty.api.ApiClient
 
 import com.sberg413.rickandmorty.models.CharacterList
-import com.sberg413.rickandmorty.ui.models.Character
+import com.sberg413.rickandmorty.models.Character
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
