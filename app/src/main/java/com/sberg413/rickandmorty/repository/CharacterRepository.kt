@@ -6,13 +6,14 @@ import androidx.lifecycle.MutableLiveData
 import com.sberg413.rickandmorty.api.ApiClient
 
 import com.sberg413.rickandmorty.models.CharacterList
+import com.sberg413.rickandmorty.ui.models.Character
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class CharacterRepository {
 
-    fun getMutableLiveData(context: Context) : MutableLiveData<CharacterList> {
+    fun getCharacterListLiveData(context: Context) : MutableLiveData<CharacterList> {
 
         val mutableLiveData = MutableLiveData<CharacterList>()
 
@@ -40,8 +41,29 @@ class CharacterRepository {
         return mutableLiveData
     }
 
-    fun getValue() : CharacterRepository {
-        return CharacterRepository()
+    fun getCharacterDetailLiveData(id: String) : MutableLiveData<Character> {
+
+        val mutableLiveData = MutableLiveData<Character>()
+
+        ApiClient.apiService.getCharacterDetail(id).enqueue(object :
+            Callback<Character> {
+            override fun onFailure(call: Call<Character>, t: Throwable) {
+                Log.e("error", t.localizedMessage)
+            }
+
+            override fun onResponse(
+                call: Call<Character>,
+                response: Response<Character>
+            ) {
+                // hideProgressBar()
+                val character = response.body()
+                Log.d(TAG, character.toString())
+                character?.let { mutableLiveData.value = it }
+            }
+
+        })
+
+        return mutableLiveData
     }
 
     companion object {

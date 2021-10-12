@@ -38,7 +38,7 @@ class CharacterAdapter(private val context: Context, private var list: List<Char
         val character = list[position]
         holder.name?.text = character.name
         holder.species?.text = character?.species + " | " + character?.status
-        holder.itemView.tag = character
+        holder.itemView.tag = character.id
 
         holder.image?.let {
             Glide.with(holder.itemView)
@@ -63,8 +63,10 @@ class CharacterAdapter(private val context: Context, private var list: List<Char
 
         override fun onClick(v: View) {
             Log.d("CharacterAdapter", "Clicked!!!! tag = ${v.tag}")
-            val intent = Intent(v.context, DetailActivity::class.java)
-            v.context.startActivity(intent)
+            v.context.startActivity(
+                Intent(v.context, DetailActivity::class.java)
+                    .putExtra("id", v.tag.toString())
+            )
         }
     }
 

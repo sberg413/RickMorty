@@ -16,7 +16,7 @@ class MainViewModel(private val context: Context) : ViewModel() {
             CharacterRepository()
         }
         if(isInternetAvailable(context)) {
-            listData = characterRepository.getMutableLiveData(context)
+            listData = characterRepository.getCharacterListLiveData(context)
         }
     }
 
