@@ -21,11 +21,6 @@ class DetailActivity: AppCompatActivity() {
         intent.getStringExtra("id")?.let { id ->
             val viewModel = ViewModelProvider(this, DetailViewModelFactory(id))
                 .get(DetailViewModel::class.java)
-            viewModel.characterData.observe(this,
-                {
-                    Log.d("DetailActivity", "Detail Live Data = $it")
-                    viewModel.updateLocation(it.location.url, this)
-                })
 
             binding.viewmodel = viewModel
             binding.lifecycleOwner = this

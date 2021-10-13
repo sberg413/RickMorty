@@ -4,19 +4,19 @@ import android.util.Log
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.models.Character
-import com.sberg413.rickandmorty.models.Location
 
 class DetailViewModel(id: String): ViewModel() {
 
     var characterData: LiveData<Character>
+
+    private val cdObserver = Observer<Character> {
+        updateLocation(it.location.url)
+    }
 
     private val characterRepository: CharacterRepository by lazy {
         CharacterRepository()
@@ -24,9 +24,15 @@ class DetailViewModel(id: String): ViewModel() {
 
     init {
         characterData = characterRepository.getCharacterDetailLiveData(id)
+        characterData.observeForever(cdObserver)
     }
 
-    fun updateLocation(locationUrl: String, owner: LifecycleOwner) {
+    override fun onCleared() {
+        characterData.removeObserver(cdObserver)
+        super.onCleared()
+    }
+
+    private fun updateLocation(locationUrl: String) {
         val locationId = locationUrl.replace(Regex(".*/"), "")
         Log.d(TAG, "location id = $locationId")
         characterData.value?.locationDetails = characterRepository.getLocationLiveData(locationId)
