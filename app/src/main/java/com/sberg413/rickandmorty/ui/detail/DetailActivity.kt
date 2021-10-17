@@ -19,8 +19,9 @@ class DetailActivity: AppCompatActivity() {
             this, R.layout.detail_activity)
 
         intent.getStringExtra("id")?.let { id ->
-            val viewModel = ViewModelProvider(this, DetailViewModelFactory(id))
-                .get(DetailViewModel::class.java)
+            val viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+
+            viewModel.initCharacterId(id)
 
             binding.viewmodel = viewModel
             binding.lifecycleOwner = this
