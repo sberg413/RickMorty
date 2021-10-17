@@ -2,13 +2,18 @@ package com.sberg413.rickandmorty.ui.detail
 
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.databinding.DetailActivityBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DetailActivity: AppCompatActivity() {
+
+    private val detailViewModel : DetailViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,11 +24,11 @@ class DetailActivity: AppCompatActivity() {
             this, R.layout.detail_activity)
 
         intent.getStringExtra("id")?.let { id ->
-            val viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
+            // val viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
 
-            viewModel.initCharacterId(id)
+            detailViewModel.initCharacterId(id)
 
-            binding.viewmodel = viewModel
+            binding.viewmodel = detailViewModel
             binding.lifecycleOwner = this
             binding.executePendingBindings()
         }

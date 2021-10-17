@@ -11,7 +11,11 @@ import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
 
-class DetailViewModel: ViewModel() {
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+
+@HiltViewModel
+class DetailViewModel @Inject constructor(characterRepository: CharacterRepository): ViewModel() {
 
     private val _charId = MutableLiveData<String>()
 
@@ -29,9 +33,9 @@ class DetailViewModel: ViewModel() {
 
     var locationData: LiveData<Location> = _locationData
 
-    private val characterRepository: CharacterRepository by lazy {
-        CharacterRepository()
-    }
+//    private val characterRepository: CharacterRepository by lazy {
+//        CharacterRepository()
+//    }
 
     fun initCharacterId(id: String) {
         _charId.value = id
