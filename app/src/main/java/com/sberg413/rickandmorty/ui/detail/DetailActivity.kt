@@ -24,7 +24,6 @@ class DetailActivity: AppCompatActivity() {
             this, R.layout.detail_activity)
 
         intent.getStringExtra("id")?.let { id ->
-            // val viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
 
             detailViewModel.initCharacterId(id)
 
