@@ -11,7 +11,7 @@ This implementation shows off several libraries and concepts. Among these are:
 A TODO list if more time were to be dedicated to the project is as follows:
 * Use view binding for the initial list
 * Make list of characters paging loading additional characters as you scroll  
-* Implement dependency injection with Hilt/Dagger
+* ~~Implement dependency injection with Hilt/Dagger~~
 * Implement better error handling for bad network and response error scenarios
 * Replace hardcoded strings with resource strings
 * Swap out Gson for Moshi

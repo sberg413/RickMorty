@@ -1,6 +1,7 @@
 package com.sberg413.rickandmorty.ui.main
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -8,8 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.models.Character
+import com.sberg413.rickandmorty.ui.detail.DetailViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private val mainViewModel : MainViewModel by viewModels()
 
     private val listCharacters = mutableListOf<Character>()
 
@@ -24,8 +30,8 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getData().observe(this,
+        // val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        mainViewModel.getData().observe(this,
             { t ->
                 listCharacters.clear()
                 t?.let { listCharacters.addAll(it.results) }
