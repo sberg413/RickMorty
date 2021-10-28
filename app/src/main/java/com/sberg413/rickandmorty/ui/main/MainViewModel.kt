@@ -8,15 +8,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(characterRepository: CharacterRepository): ViewModel() {
+class MainViewModel @Inject constructor(private val characterRepository: CharacterRepository): ViewModel() {
 
     private var listData = MutableLiveData<CharacterList>()
 
     init{
-        listData = characterRepository.getCharacterListLiveData()
+        listData = characterRepository.getCharacterListLiveData("")
     }
 
     fun getData() : MutableLiveData<CharacterList> {
+        return listData
+    }
+
+    fun search(name: String) : MutableLiveData<CharacterList> {
+        listData = characterRepository.getCharacterListLiveData(name)
         return listData
     }
 }

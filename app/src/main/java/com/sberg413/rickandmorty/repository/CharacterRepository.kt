@@ -13,11 +13,12 @@ import javax.inject.Inject
 
 class CharacterRepository @Inject constructor(private val apiService: ApiService) {
 
-    fun getCharacterListLiveData() : MutableLiveData<CharacterList> {
+    fun getCharacterListLiveData(name: String) : MutableLiveData<CharacterList> {
 
         val mutableLiveData = MutableLiveData<CharacterList>()
 
-        apiService.getCharacterList().enqueue(object :
+
+        apiService.getCharacterList(name).enqueue(object :
             Callback<CharacterList> {
             override fun onFailure(call: Call<CharacterList>, t: Throwable) {
                 Log.e(TAG, t.localizedMessage)
