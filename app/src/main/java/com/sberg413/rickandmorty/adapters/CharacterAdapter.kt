@@ -1,71 +1,58 @@
 package com.sberg413.rickandmorty.adapters
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.sberg413.rickandmorty.R
+import com.sberg413.rickandmorty.BR
+import com.sberg413.rickandmorty.databinding.CharacterRowBinding
 import com.sberg413.rickandmorty.models.Character
 
-import android.content.Intent
-import com.sberg413.rickandmorty.ui.detail.DetailActivity
-
-
-class CharacterAdapter(private val context: Context, private var list: List<Character>) :
+class CharacterAdapter(private val listener: CharacterListener) :
     RecyclerView.Adapter<CharacterAdapter.MyViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val inflater = LayoutInflater.from(context)
-        val view: View = inflater.inflate(R.layout.character_row, parent, false)
-        return MyViewHolder(view)
+    interface CharacterListener {
+        fun onClickedCharacter(charIdString: String)
     }
 
-    override fun getItemCount(): Int {
-        return list.size
+    private val listOfCharacters: MutableList<Character> = mutableListOf()
+
+    fun replaceAllCharacters(characters: List<Character>) {
+        listOfCharacters.clear()
+        listOfCharacters.addAll(characters)
+        notifyDataSetChanged()
     }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val inflater = LayoutInflater.from(parent.context)
+        val characterBinding = CharacterRowBinding.inflate(inflater, parent, false)
+        return MyViewHolder(characterBinding, listener)
+    }
+
+    override fun getItemCount(): Int = listOfCharacters.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val character = list[position]
-        holder.name?.text = character.name
-        holder.status?.text = character.status
-        holder.species?.text = character.species
-        holder.itemView.tag = character.id
-
-        holder.image?.let {
-            Glide.with(holder.itemView)
-                .load(character.image)
-                .transform(CircleCrop())
-                .into(it)
-        }
+        holder.bind(listOfCharacters[position])
     }
 
-    class MyViewHolder(view: View) : RecyclerView.ViewHolder(view),  View.OnClickListener {
-        var image: ImageView? = null
-        var name: TextView? = null
-        var status: TextView? = null
-        var species: TextView? = null
+    class MyViewHolder(private val binding: ViewDataBinding, private val listener: CharacterListener)
+        : RecyclerView.ViewHolder(binding.root),  View.OnClickListener {
 
         init {
-            image = view.findViewById(R.id.image)
-            name = view.findViewById(R.id.name)
-            status = view.findViewById(R.id.status)
-            species = view.findViewById(R.id.species)
-            view.isClickable = true
-            view.setOnClickListener(this)
+            binding.root.setOnClickListener(this)
+        }
+
+        fun bind(character: Character) {
+            binding.root.tag = character.id
+            binding.setVariable(BR.character,character)
+            binding.executePendingBindings()
         }
 
         override fun onClick(v: View) {
             Log.d("CharacterAdapter", "Clicked!!!! tag = ${v.tag}")
-            v.context.startActivity(
-                Intent(v.context, DetailActivity::class.java)
-                    .putExtra("id", v.tag.toString())
-            )
+            listener.onClickedCharacter(v.tag.toString())
         }
     }
 
