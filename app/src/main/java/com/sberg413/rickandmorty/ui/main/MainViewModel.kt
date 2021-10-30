@@ -15,8 +15,7 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     val listData: LiveData<CharacterList>
         get() = _listData
 
-    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
-    internal var _listData = MutableLiveData<CharacterList>()
+    private var _listData = MutableLiveData<CharacterList>()
 
     init{
         _listData = characterRepository.getCharacterListLiveData("")

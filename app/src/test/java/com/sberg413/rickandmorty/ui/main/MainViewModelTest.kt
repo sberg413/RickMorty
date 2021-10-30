@@ -36,14 +36,12 @@ class MainViewModelTest : TestCase() {
     @Test
     fun getData() {
         val dataResponse = MutableLiveData<CharacterList>()
-        `when`(characterRepository.getCharacterListLiveData()).then {
+        `when`(characterRepository.getCharacterListLiveData("")).then {
             dataResponse
         }
         val viewModel = MainViewModel(characterRepository)
 
-        val charData = viewModel.getData()
-
-        assertNotNull(charData)
-        assertEquals(viewModel.getData().value,  null)
+        assertNotNull(viewModel.listData)
+        assertEquals(viewModel.listData.value,  null)
     }
 }
