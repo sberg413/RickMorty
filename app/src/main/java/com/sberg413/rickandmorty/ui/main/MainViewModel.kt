@@ -1,5 +1,6 @@
 package com.sberg413.rickandmorty.ui.main
 
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,7 +15,8 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     val listData: LiveData<CharacterList>
         get() = _listData
 
-    private var _listData = MutableLiveData<CharacterList>()
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    internal var _listData = MutableLiveData<CharacterList>()
 
     init{
         _listData = characterRepository.getCharacterListLiveData("")
