@@ -1,22 +1,27 @@
 package com.sberg413.rickandmorty.ui.main
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sberg413.rickandmorty.models.CharacterList
 import com.sberg413.rickandmorty.repository.CharacterRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class MainViewModel : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(private val characterRepository: CharacterRepository): ViewModel() {
 
-    private var listData = MutableLiveData<CharacterList>()
+    val listData: LiveData<CharacterList>
+        get() = _listData
+
+    private var _listData = MutableLiveData<CharacterList>()
 
     init{
-        val characterRepository : CharacterRepository by lazy {
-            CharacterRepository()
-        }
-        listData = characterRepository.getCharacterListLiveData()
+        _listData = characterRepository.getCharacterListLiveData("")
     }
 
-    fun getData() : MutableLiveData<CharacterList> {
-        return listData
+    fun search(name: String) : MutableLiveData<CharacterList> {
+        _listData = characterRepository.getCharacterListLiveData(name)
+        return _listData
     }
 }
