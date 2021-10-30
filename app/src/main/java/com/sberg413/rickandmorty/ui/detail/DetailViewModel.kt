@@ -17,13 +17,17 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailViewModel @Inject constructor(characterRepository: CharacterRepository): ViewModel() {
 
+    val characterData: LiveData<Character>
+        get() = _characterData
+
+    val locationData: LiveData<Location>
+        get() = _locationData
+
     private val _charId = MutableLiveData<String>()
 
     private val _characterData = _charId.switchMap { id ->
         characterRepository.getCharacterDetailLiveData(id)
     }
-
-    var characterData: LiveData<Character> = _characterData
 
     private val _locationData = characterData.switchMap { character ->
         Log.d(TAG, "character = $character")
@@ -31,36 +35,11 @@ class DetailViewModel @Inject constructor(characterRepository: CharacterReposito
         characterRepository.getLocationLiveData(locationId)
     }
 
-    var locationData: LiveData<Location> = _locationData
-
-//    private val characterRepository: CharacterRepository by lazy {
-//        CharacterRepository()
-//    }
-
     fun initCharacterId(id: String) {
         _charId.value = id
     }
 
     companion object {
         private const val TAG = "DetailViewModel"
-
-        @JvmStatic
-        @BindingAdapter("characterImage")
-        fun loadImage(view: ImageView, image: String?) {
-            if (image != null) {
-                Glide.with(view.context)
-                    .load(image)
-                    .transform(CircleCrop())
-                    .into(view)
-            }
-        }
-
-        @JvmStatic
-        @BindingAdapter("countResidents")
-        fun countResidents(view: TextView, residence: List<String>?) {
-            if (residence != null) {
-                view.text = residence.size.toString()
-            }
-        }
     }
 }

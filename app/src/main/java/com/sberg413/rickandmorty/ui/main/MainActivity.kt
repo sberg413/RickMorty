@@ -60,8 +60,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        mainViewModel.getData().observe(this,
+        mainViewModel.listData.observe(this,
             { t ->
                 listCharacters.clear()
                 t?.let { listCharacters.addAll(it.results) }

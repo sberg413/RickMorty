@@ -1,5 +1,6 @@
 package com.sberg413.rickandmorty.ui.main
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.sberg413.rickandmorty.models.CharacterList
@@ -10,18 +11,17 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val characterRepository: CharacterRepository): ViewModel() {
 
-    private var listData = MutableLiveData<CharacterList>()
+    val listData: LiveData<CharacterList>
+        get() = _listData
+
+    private var _listData = MutableLiveData<CharacterList>()
 
     init{
-        listData = characterRepository.getCharacterListLiveData("")
-    }
-
-    fun getData() : MutableLiveData<CharacterList> {
-        return listData
+        _listData = characterRepository.getCharacterListLiveData("")
     }
 
     fun search(name: String) : MutableLiveData<CharacterList> {
-        listData = characterRepository.getCharacterListLiveData(name)
-        return listData
+        _listData = characterRepository.getCharacterListLiveData(name)
+        return _listData
     }
 }

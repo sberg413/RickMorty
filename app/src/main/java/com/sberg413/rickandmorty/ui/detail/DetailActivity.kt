@@ -1,11 +1,14 @@
 package com.sberg413.rickandmorty.ui.detail
 
 import android.os.Bundle
-import android.util.Log
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CircleCrop
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.databinding.DetailActivityBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -24,7 +27,6 @@ class DetailActivity: AppCompatActivity() {
             this, R.layout.detail_activity)
 
         intent.getStringExtra("id")?.let { id ->
-            // val viewModel = ViewModelProvider(this).get(DetailViewModel::class.java)
 
             detailViewModel.initCharacterId(id)
 
@@ -33,5 +35,27 @@ class DetailActivity: AppCompatActivity() {
             binding.executePendingBindings()
         }
 
+    }
+
+    companion object {
+
+        @JvmStatic
+        @BindingAdapter("characterImage")
+        fun loadImage(view: ImageView, image: String?) {
+            if (image != null) {
+                Glide.with(view.context)
+                    .load(image)
+                    .transform(CircleCrop())
+                    .into(view)
+            }
+        }
+
+        @JvmStatic
+        @BindingAdapter("countResidents")
+        fun countResidents(view: TextView, residence: List<String>?) {
+            if (residence != null) {
+                view.text = residence.size.toString()
+            }
+        }
     }
 }
