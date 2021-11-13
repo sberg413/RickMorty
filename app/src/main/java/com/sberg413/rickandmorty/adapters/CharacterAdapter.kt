@@ -1,21 +1,15 @@
 package com.sberg413.rickandmorty.adapters
 
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.sberg413.rickandmorty.BR
 import com.sberg413.rickandmorty.databinding.CharacterRowBinding
 import com.sberg413.rickandmorty.models.Character
+import com.sberg413.rickandmorty.ui.main.MainViewModel
 
-class CharacterAdapter(private val listener: CharacterListener) :
-    RecyclerView.Adapter<CharacterAdapter.MyViewHolder>() {
-
-    interface CharacterListener {
-        fun onClickedCharacter(charIdString: String)
-    }
+class CharacterAdapter(val mainViewModel: MainViewModel) : RecyclerView.Adapter<CharacterAdapter.MyViewHolder>() {
 
     private val listOfCharacters: MutableList<Character> = mutableListOf()
 
@@ -28,7 +22,7 @@ class CharacterAdapter(private val listener: CharacterListener) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val characterBinding = CharacterRowBinding.inflate(inflater, parent, false)
-        return MyViewHolder(characterBinding, listener)
+        return MyViewHolder(characterBinding, mainViewModel)
     }
 
     override fun getItemCount(): Int = listOfCharacters.size
@@ -37,23 +31,16 @@ class CharacterAdapter(private val listener: CharacterListener) :
         holder.bind(listOfCharacters[position])
     }
 
-    class MyViewHolder(private val binding: ViewDataBinding, private val listener: CharacterListener)
-        : RecyclerView.ViewHolder(binding.root),  View.OnClickListener {
-
-        init {
-            binding.root.setOnClickListener(this)
-        }
+    // Passing in ViewDataBindng instead of CharacterRowBinding is more generic.
+    class MyViewHolder(private val binding: ViewDataBinding,
+                       private val mainViewModel: MainViewModel)
+        : RecyclerView.ViewHolder(binding.root){
 
         fun bind(character: Character) {
             binding.root.tag = character.id
             binding.setVariable(BR.character,character)
+            binding.setVariable(BR.viewmodel,mainViewModel)
             binding.executePendingBindings()
         }
-
-        override fun onClick(v: View) {
-            Log.d("CharacterAdapter", "Clicked!!!! tag = ${v.tag}")
-            listener.onClickedCharacter(v.tag.toString())
-        }
     }
-
 }
