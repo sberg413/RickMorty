@@ -6,6 +6,9 @@
     <data>
         <variable name="character"
             type="com.sberg413.rickandmorty.models.Character" />
+        <variable
+            name="viewmodel"
+            type="com.sberg413.rickandmorty.ui.main.MainViewModel" />
     </data>
     <androidx.cardview.widget.CardView
         app:cardCornerRadius="10dp"
@@ -17,6 +20,10 @@
         android:layout_marginEnd="15dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:onClick="@{()->viewmodel.userClickOnCharacter(character)}"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="10dp">

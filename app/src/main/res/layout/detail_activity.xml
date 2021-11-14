@@ -124,7 +124,7 @@
             tools:text="TextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dimension"
-            app:countResidents="@{viewmodel.locationData.residents}"/>
+            android:text="@{Integer.toString(viewmodel.locationData.residentCount)}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
