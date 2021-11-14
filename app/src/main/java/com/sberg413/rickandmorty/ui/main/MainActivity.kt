@@ -47,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 Log.d(TAG,"newText = $newText" )
                 newText.takeIf { it =="" }?.let {
-                    mainViewModel.search(it).observe(this@MainActivity,
+                    mainViewModel.search(null).observe(this@MainActivity,
                         { t ->
                             characterAdapter.replaceAllCharacters(t.results)
                         })

@@ -13,16 +13,14 @@ import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiService) : CharacterRepository {
 
-    override fun getCharacterListLiveData(name: String) : MutableLiveData<CharacterList> {
+    override fun getCharacterListLiveData(name: String?) : MutableLiveData<CharacterList> {
 
         val mutableLiveData = MutableLiveData<CharacterList>()
 
-
-
-        apiService.getCharacterList(name).enqueue(object :
+        apiService.getCharacterList(1, name).enqueue(object :
             Callback<CharacterList> {
             override fun onFailure(call: Call<CharacterList>, t: Throwable) {
-                Log.e(TAG, t.localizedMessage)
+                Log.e(TAG, "Enqueue failed with msg = ${t.localizedMessage}")
             }
 
             override fun onResponse(
@@ -88,6 +86,6 @@ class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiSer
     }
 
     companion object {
-        private const val TAG = "CharacterRepository"
+        private const val TAG = "CharacterRepositoryImpl"
     }
 }

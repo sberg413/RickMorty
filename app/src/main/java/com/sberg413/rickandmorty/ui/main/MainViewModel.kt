@@ -22,7 +22,7 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     private val _navigateToDetails = MutableLiveData<Event<Character>>()
 
     init{
-        _listData = characterRepository.getCharacterListLiveData("")
+        _listData = characterRepository.getCharacterListLiveData(null)
     }
 
     fun userClickOnCharacter(character: Character) {
@@ -30,7 +30,7 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
         _navigateToDetails.value = Event(character)  // Trigger the event by setting a new Event as a new value
     }
 
-    fun search(name: String) : MutableLiveData<CharacterList> {
+    fun search(name: String?) : MutableLiveData<CharacterList> {
         _listData = characterRepository.getCharacterListLiveData(name)
         return _listData
     }
