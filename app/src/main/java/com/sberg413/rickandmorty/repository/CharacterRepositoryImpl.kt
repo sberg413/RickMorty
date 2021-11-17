@@ -9,32 +9,25 @@ import com.sberg413.rickandmorty.models.Location
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.IOException
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiService) : CharacterRepository {
 
-    override fun getCharacterListLiveData(name: String?) : MutableLiveData<CharacterList> {
-
-        val mutableLiveData = MutableLiveData<CharacterList>()
-
-        apiService.getCharacterList(1, name).enqueue(object :
-            Callback<CharacterList> {
-            override fun onFailure(call: Call<CharacterList>, t: Throwable) {
-                Log.e(TAG, "Enqueue failed with msg = ${t.localizedMessage}")
-            }
-
-            override fun onResponse(
-                call: Call<CharacterList>,
-                response: Response<CharacterList>
-            ) {
-                val characterList = response.body()
+    override suspend fun getCharacterList(name: String?) : Result<CharacterList> {
+        return try {
+            val response = apiService.getCharacterList(1, name).execute()
+            if (response.isSuccessful) {
+                val characterList = response.body() ?: throw IOException("Character list is null!")
                 Log.d(TAG, characterList.toString())
-                characterList?.let { mutableLiveData.value = it }
+                Result.success(characterList)
+            } else {
+                throw IOException(response.message())
             }
-
-        })
-
-        return mutableLiveData
+        } catch (e: IOException) {
+            Log.e(TAG, "getCharacterList error: ${e.message}")
+            Result.failure(e)
+        }
     }
 
     override fun getCharacterDetailLiveData(id: String) : MutableLiveData<Character> {

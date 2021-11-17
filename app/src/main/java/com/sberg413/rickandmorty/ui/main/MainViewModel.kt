@@ -1,14 +1,15 @@
 package com.sberg413.rickandmorty.ui.main
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.CharacterList
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 import javax.inject.Inject
 
@@ -19,10 +20,10 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     private var _listData = MutableLiveData<CharacterList>()
 
     val navigateToDetails : LiveData<Event<Character>> get() = _navigateToDetails
-    private val _navigateToDetails = MutableLiveData<Event<Character>>()
+    private var _navigateToDetails = MutableLiveData<Event<Character>>()
 
     init{
-        _listData = characterRepository.getCharacterListLiveData(null)
+        updateCharacterList(null)
     }
 
     fun userClickOnCharacter(character: Character) {
@@ -30,8 +31,17 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
         _navigateToDetails.value = Event(character)  // Trigger the event by setting a new Event as a new value
     }
 
-    fun search(name: String?) : MutableLiveData<CharacterList> {
-        _listData = characterRepository.getCharacterListLiveData(name)
-        return _listData
+    fun updateCharacterList(name: String?) {
+        viewModelScope.launch {
+             val listDataCall = viewModelScope.async(Dispatchers.IO) {
+                 characterRepository.getCharacterList(name)
+             }
+            val result = listDataCall.await()
+            if (result.isSuccess) {
+                _listData.value = result.getOrNull()
+            } else {
+                // TODO: Handle error
+            }
+        }
     }
 }

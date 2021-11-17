@@ -7,7 +7,7 @@ import com.sberg413.rickandmorty.models.Location
 
 interface CharacterRepository {
 
-    fun getCharacterListLiveData(name: String?) : MutableLiveData<CharacterList>
+    suspend fun getCharacterList( name: String?): Result<CharacterList?>
     fun getCharacterDetailLiveData(id: String) : MutableLiveData<Character>
     fun getLocationLiveData(id: String) : MutableLiveData<Location>
 }
