@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sberg413.rickandmorty.R
@@ -27,8 +28,11 @@ class MainActivity : AppCompatActivity() {
             .setContentView<MainActivityBinding>(this, R.layout.main_activity)
 
         val characterAdapter = CharacterAdapter(mainViewModel)
+
         binding.recyclerMain.adapter = characterAdapter
         binding.recyclerMain.layoutManager = LinearLayoutManager(this@MainActivity)
+        binding.lifecycleOwner = this
+        binding.viewModel = mainViewModel
 
         binding.searchBar.setOnQueryTextListener(object: SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -52,6 +56,12 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "Character list data changed!")
                 characterAdapter.replaceAllCharacters(t.results)
             })
+
+        mainViewModel.isLoading.observe(this, { t ->
+            Log.d(TAG, "isLoading initialized or changed. Update progress view ...")
+            binding.recyclerMain.isVisible = !t
+            binding.progressBar.isVisible = t
+        })
 
         mainViewModel.navigateToDetails.observe(this, { event ->
             // Only proceed if the event has never been handled
