@@ -1,16 +1,13 @@
 package com.sberg413.rickandmorty.ui.detail
 
 import android.util.Log
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.databinding.BindingAdapter
-import androidx.lifecycle.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
-import com.sberg413.rickandmorty.repository.CharacterRepository
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.switchMap
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
-
+import com.sberg413.rickandmorty.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 

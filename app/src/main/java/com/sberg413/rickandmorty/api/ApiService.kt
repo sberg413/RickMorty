@@ -11,7 +11,8 @@ import retrofit2.http.Query
 interface ApiService {
 
     @GET("character")
-    fun getCharacterList(@Query("name") name: String): Call<CharacterList>
+    suspend fun getCharacterList(@Query("page") page: Int?,
+                         @Query("name") name: String?): CharacterList
 
     @GET("character/{id}")
     fun getCharacterDetail(@Path("id")  id: String): Call<Character>

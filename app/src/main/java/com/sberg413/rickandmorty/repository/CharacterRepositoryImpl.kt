@@ -2,10 +2,13 @@ package com.sberg413.rickandmorty.repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.sberg413.rickandmorty.api.ApiService
 import com.sberg413.rickandmorty.models.Character
-import com.sberg413.rickandmorty.models.CharacterList
 import com.sberg413.rickandmorty.models.Location
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -13,30 +16,11 @@ import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiService) : CharacterRepository {
 
-    override fun getCharacterListLiveData(name: String) : MutableLiveData<CharacterList> {
-
-        val mutableLiveData = MutableLiveData<CharacterList>()
-
-
-
-        apiService.getCharacterList(name).enqueue(object :
-            Callback<CharacterList> {
-            override fun onFailure(call: Call<CharacterList>, t: Throwable) {
-                Log.e(TAG, t.localizedMessage)
-            }
-
-            override fun onResponse(
-                call: Call<CharacterList>,
-                response: Response<CharacterList>
-            ) {
-                val characterList = response.body()
-                Log.d(TAG, characterList.toString())
-                characterList?.let { mutableLiveData.value = it }
-            }
-
-        })
-
-        return mutableLiveData
+    override fun getCharacterList(name: String?) : Flow<PagingData<Character>> {
+        return Pager(
+            config = PagingConfig( pageSize = 20, enablePlaceholders = false),
+            pagingSourceFactory = { CharacterPagingSource(apiService, name) } )
+            .flow
     }
 
     override fun getCharacterDetailLiveData(id: String) : MutableLiveData<Character> {
@@ -88,6 +72,6 @@ class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiSer
     }
 
     companion object {
-        private const val TAG = "CharacterRepository"
+        private const val TAG = "CharacterRepositoryImpl"
     }
 }
