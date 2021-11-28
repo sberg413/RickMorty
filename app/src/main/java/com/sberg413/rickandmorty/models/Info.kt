@@ -1,4 +1,4 @@
-package com.sberg413.rickandmorty.ui.models
+package com.sberg413.rickandmorty.models
 
 data class Info(
     val count: Int,

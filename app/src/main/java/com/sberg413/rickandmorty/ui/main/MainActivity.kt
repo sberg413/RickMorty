@@ -9,17 +9,21 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainActivityBinding
 import com.sberg413.rickandmorty.ui.detail.DetailActivity
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val mainViewModel : MainViewModel by viewModels()
+
+    lateinit var characterAdapter: CharacterAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         val binding = DataBindingUtil
             .setContentView<MainActivityBinding>(this, R.layout.main_activity)
 
-        val characterAdapter = CharacterAdapter(mainViewModel)
+        characterAdapter = CharacterAdapter(mainViewModel)
 
         binding.recyclerMain.adapter = characterAdapter
         binding.recyclerMain.layoutManager = LinearLayoutManager(this@MainActivity)
@@ -52,10 +56,14 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mainViewModel.listData.observe(this, { t ->
-                Log.d(TAG, "Character list data changed!")
-                characterAdapter.replaceAllCharacters(t.results)
-            })
+        // Activities can use lifecycleScope directly, but Fragments should instead use
+        // viewLifecycleOwner.lifecycleScope.
+        mainViewModel.listData.observe(this, { pagingData ->
+            lifecycleScope.launch {
+                Log.d(TAG, "collectLatest = $pagingData")
+                characterAdapter.submitData(pagingData)
+            }
+        })
 
         mainViewModel.isLoading.observe(this, { t ->
             Log.d(TAG, "isLoading initialized or changed. Update progress view ...")

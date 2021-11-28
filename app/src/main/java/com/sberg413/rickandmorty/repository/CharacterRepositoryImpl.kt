@@ -2,32 +2,25 @@ package com.sberg413.rickandmorty.repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import com.sberg413.rickandmorty.api.ApiService
 import com.sberg413.rickandmorty.models.Character
-import com.sberg413.rickandmorty.models.CharacterList
 import com.sberg413.rickandmorty.models.Location
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.IOException
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiService) : CharacterRepository {
 
-    override suspend fun getCharacterList(name: String?) : Result<CharacterList> {
-        return try {
-            val response = apiService.getCharacterList(1, name).execute()
-            if (response.isSuccessful) {
-                val characterList = response.body() ?: throw IOException("Character list is null!")
-                Log.d(TAG, characterList.toString())
-                Result.success(characterList)
-            } else {
-                throw IOException(response.message())
-            }
-        } catch (e: IOException) {
-            Log.e(TAG, "getCharacterList error: ${e.message}")
-            Result.failure(e)
-        }
+    override fun getCharacterList(name: String?) : Flow<PagingData<Character>> {
+        return Pager(
+            config = PagingConfig( pageSize = 20, enablePlaceholders = false),
+            pagingSourceFactory = { CharacterPagingSource(apiService, name) } )
+            .flow
     }
 
     override fun getCharacterDetailLiveData(id: String) : MutableLiveData<Character> {
