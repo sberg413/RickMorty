@@ -10,9 +10,11 @@ import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,16 +41,18 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
 
     fun updateCharacterList(name: String?) {
         viewModelScope.launch {
-            // _isLoading.value = true
-            characterRepository.getCharacterList(name).apply {
-                collectLatest {
-                    _listData.postValue(it)
+            _isLoading.value = true
+            withContext(Dispatchers.IO) {
+                characterRepository.getCharacterList(name).apply {
+                    _isLoading.postValue(false)
+                    collectLatest {
+                        _listData.postValue(it)
+                    }
+                    // cachedIn(this@launch)
+                    catch {
+                        Log.e(TAG, "updateCharacterList: a network error occurred!")
+                    }
                 }
-                // cachedIn(this@launch)
-                catch {
-                    Log.e(TAG, "updateCharacterList: a network error occurred!" )
-                }
-                // _isLoading.value = false
             }
         }
     }
