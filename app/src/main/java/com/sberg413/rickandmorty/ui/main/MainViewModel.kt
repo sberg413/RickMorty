@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.utils.Event
@@ -38,17 +39,15 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
         _navigateToDetails.value = Event(character)  // Trigger the event by setting a new Event as a new value
     }
 
-
     fun updateCharacterList(name: String?) {
         viewModelScope.launch {
             _isLoading.value = true
             withContext(Dispatchers.IO) {
-                characterRepository.getCharacterList(name).apply {
+                characterRepository.getCharacterList(name).cachedIn(this).apply {
                     _isLoading.postValue(false)
                     collectLatest {
                         _listData.postValue(it)
                     }
-                    // cachedIn(this@launch)
                     catch {
                         Log.e(TAG, "updateCharacterList: a network error occurred!")
                     }
