@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +16,6 @@ import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
 import com.sberg413.rickandmorty.ui.detail.DetailActivity
 import kotlinx.coroutines.launch
-import java.lang.RuntimeException
 
 class MainFragment : Fragment() {
 
@@ -72,18 +70,11 @@ class MainFragment : Fragment() {
                 }
             })
 
-            mainViewModel.isLoading.observe(viewLifecycleOwner, { t ->
-                Log.d(TAG, "isLoading initialized or changed. Update progress view ...")
-                this.recyclerMain.isVisible = !t
-                this.progressBar.isVisible = t
-            })
-
-            mainViewModel.navigateToDetails.observe(viewLifecycleOwner, { event ->
-                // Only proceed if the event has never been handled
-                event.getContentIfNotHandled()?.let { character ->
-                    startDetailPage(requireContext(), character.id)
-                }
-            })
+//            mainViewModel.isLoading.observe(viewLifecycleOwner, { t ->
+//                Log.d(TAG, "isLoading initialized or changed. Update progress view ...")
+//                this.recyclerMain.isVisible = !t
+//                this.progressBar.isVisible = t
+//            })
         }
     }
 

@@ -7,8 +7,8 @@
         <variable name="character"
             type="com.sberg413.rickandmorty.models.Character" />
         <variable
-            name="viewmodel"
-            type="com.sberg413.rickandmorty.ui.main.MainViewModel" />
+            name="clickListener"
+            type="android.view.View.OnClickListener" />
     </data>
     <androidx.cardview.widget.CardView
         app:cardCornerRadius="10dp"
@@ -21,7 +21,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/rowLayout"
-            android:onClick="@{()->viewmodel.userClickOnCharacter(character)}"
+            android:onClick="@{clickListener}"
             android:clickable="true"
             android:focusable="true"
             android:background="?attr/selectableItemBackground"

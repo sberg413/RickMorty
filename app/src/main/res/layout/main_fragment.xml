@@ -33,7 +33,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_bar"
-            android:visibility="visible"/>
+            android:visibility="@{viewModel.isLoading ? View.GONE : View.VISIBLE}"/>
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -43,7 +43,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:visibility="gone"/>
+            android:visibility="@{viewModel.isLoading ? View.VISIBLE : View.GONE}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
