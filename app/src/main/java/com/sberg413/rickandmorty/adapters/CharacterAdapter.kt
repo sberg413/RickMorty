@@ -45,7 +45,7 @@ class CharacterAdapter(private val mainViewModel: MainViewModel) :
                     val bundle = Bundle().apply {
                         this.putString("id", character.id.toString() )
                     }
-                    it.findNavController().navigate(R.id.action_mainFragment_to_detailActivity, bundle)
+                    it.findNavController().navigate(R.id.action_character_list_dest_to_detailFragment, bundle)
                 }
 
                 binding.root.tag = character.id

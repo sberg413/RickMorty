@@ -1,24 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
     app:startDestination="@id/character_list_dest">
 
     <fragment
         android:id="@+id/character_list_dest"
         android:name="com.sberg413.rickandmorty.ui.main.MainFragment"
-        android:label="MainFragment" >
-        <action
-            android:id="@+id/action_mainFragment_to_detailActivity"
-            app:destination="@id/character_detail_dest" />
+        android:label="Rich &amp; Morty Characters">
         <argument
             android:name="characterId"
-            app:argType="integer"
-            android:defaultValue="-1" />
+            android:defaultValue="-1"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_character_list_dest_to_detailFragment"
+            app:destination="@id/detailFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
-    <activity
-        android:id="@+id/character_detail_dest"
-        android:name="com.sberg413.rickandmorty.ui.detail.DetailActivity"
-        android:label="DetailActivity" />
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.sberg413.rickandmorty.ui.detail.DetailFragment" />
 </navigation>

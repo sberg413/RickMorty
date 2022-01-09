@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,7 +34,7 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
         viewModelScope.launch {
             _isLoading.value = true
             withContext(Dispatchers.IO) {
-                characterRepository.getCharacterList(name).apply {
+                characterRepository.getCharacterList(name).cachedIn(this@launch).apply {
                     collectLatest {
                         _listData.postValue(it)
                         _isLoading.postValue(false)
