@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.sberg413.rickandmorty.MainActivity
+import androidx.navigation.fragment.navArgs
 import com.sberg413.rickandmorty.databinding.DetailFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -17,24 +17,23 @@ class DetailFragment : Fragment() {
     private val detailViewModel: DetailViewModel by viewModels()
     private var binding: DetailFragmentBinding? = null
 
+    val args: DetailFragmentArgs by navArgs()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = DetailFragmentBinding.inflate(
-            LayoutInflater.from(requireContext()), container, false
-        )
+        binding = DetailFragmentBinding.inflate(inflater, container, false)
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        arguments?.getString("id")?.let { id ->
-            detailViewModel.initCharacterId(id)
-        }
+        detailViewModel.initCharacterId(args.characterId)
+
         binding?.let {
             it.viewmodel = detailViewModel
-            it.lifecycleOwner = this
+            it.lifecycleOwner = viewLifecycleOwner
             it.executePendingBindings()
         }
 

@@ -23,7 +23,7 @@ class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiSer
             .flow
     }
 
-    override fun getCharacterDetailLiveData(id: String) : MutableLiveData<Character> {
+    override fun getCharacterDetailLiveData(id: Int) : MutableLiveData<Character> {
 
         val mutableLiveData = MutableLiveData<Character>()
 

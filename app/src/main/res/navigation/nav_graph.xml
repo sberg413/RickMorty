@@ -8,19 +8,25 @@
         android:id="@+id/character_list_dest"
         android:name="com.sberg413.rickandmorty.ui.main.MainFragment"
         android:label="Rich &amp; Morty Characters">
-        <argument
-            android:name="characterId"
-            android:defaultValue="-1"
-            app:argType="integer" />
+
         <action
-            android:id="@+id/action_character_list_dest_to_detailFragment"
+            android:id="@+id/actionShowDetailFragment"
             app:destination="@id/detailFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
+            app:popExitAnim="@anim/slide_out_right" >
+            <argument
+                android:name="characterId"
+                android:defaultValue="-1"
+                app:argType="integer" />
+        </action>
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.sberg413.rickandmorty.ui.detail.DetailFragment" />
+        android:name="com.sberg413.rickandmorty.ui.detail.DetailFragment" >
+        <argument
+            android:name="characterId"
+            app:argType="integer" />
+    </fragment>
 </navigation>

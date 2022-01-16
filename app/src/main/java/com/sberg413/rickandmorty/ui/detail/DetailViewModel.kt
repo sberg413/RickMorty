@@ -20,7 +20,7 @@ class DetailViewModel @Inject constructor(characterRepository: CharacterReposito
     val locationData: LiveData<Location>
         get() = _locationData
 
-    private val _charId = MutableLiveData<String>()
+    private val _charId = MutableLiveData<Int>()
 
     private val _characterData = _charId.switchMap { id ->
         characterRepository.getCharacterDetailLiveData(id)
@@ -32,7 +32,7 @@ class DetailViewModel @Inject constructor(characterRepository: CharacterReposito
         characterRepository.getLocationLiveData(locationId)
     }
 
-    fun initCharacterId(id: String) {
+    fun initCharacterId(id: Int) {
         _charId.value = id
     }
 

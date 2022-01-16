@@ -14,9 +14,12 @@ import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
+
+    @Inject lateinit var characterAdapter: CharacterAdapter
 
     private val mainViewModel: MainViewModel by viewModels()
     private var binding: MainFragmentBinding? = null
@@ -33,13 +36,12 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val characterAdapter = CharacterAdapter(mainViewModel)
-
         binding?.apply {
 
+            // characterAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             recyclerMain.adapter = characterAdapter
             recyclerMain.layoutManager = LinearLayoutManager(requireContext())
-            lifecycleOwner = this@MainFragment
+            lifecycleOwner = viewLifecycleOwner
             viewModel = mainViewModel
 
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -53,12 +55,15 @@ class MainFragment : Fragment() {
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     Log.d(TAG, "newText = $newText")
-                    newText.takeIf { it == "" }?.let {
-                        mainViewModel.updateCharacterList(null)
-                    }
                     return false
                 }
             })
+
+            searchBar.setOnCloseListener {
+                searchBar.setQuery("", false)
+                mainViewModel.updateCharacterList("")
+                false
+            }
 
             // Activities can use lifecycleScope directly, but Fragments should instead use
             // viewLifecycleOwner.lifecycleScope.
@@ -68,12 +73,6 @@ class MainFragment : Fragment() {
                     characterAdapter.submitData(pagingData)
                 }
             })
-
-//            mainViewModel.isLoading.observe(viewLifecycleOwner, { t ->
-//                Log.d(TAG, "isLoading initialized or changed. Update progress view ...")
-//                this.recyclerMain.isVisible = !t
-//                this.progressBar.isVisible = t
-//            })
         }
     }
 
@@ -84,7 +83,6 @@ class MainFragment : Fragment() {
 
     companion object {
         private const val TAG = "MainFragment"
-
 
         fun newInstance() = MainFragment()
     }
