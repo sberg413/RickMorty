@@ -84,6 +84,7 @@ class MainFragment : Fragment() {
     companion object {
         private const val TAG = "MainFragment"
 
+        @Suppress("UNUSED")
         fun newInstance() = MainFragment()
     }
 

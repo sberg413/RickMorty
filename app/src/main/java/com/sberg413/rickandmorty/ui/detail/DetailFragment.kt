@@ -17,7 +17,8 @@ class DetailFragment : Fragment() {
     private val detailViewModel: DetailViewModel by viewModels()
     private var binding: DetailFragmentBinding? = null
 
-    val args: DetailFragmentArgs by navArgs()
+    // Passing directly into the viewModel with SavedStateHandle
+    // val args: DetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +30,7 @@ class DetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        detailViewModel.initCharacterId(args.characterId)
+        // detailViewModel.initWithCharacter(args.character)
 
         binding?.let {
             it.viewmodel = detailViewModel

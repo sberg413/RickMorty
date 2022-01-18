@@ -38,13 +38,11 @@ class CharacterAdapter @Inject constructor() :
         fun bind(character: Character?) {
             Log.d(TAG, "bind: $character")
             if (character != null) {
-
                 val clickListener = View.OnClickListener {
-                    val action = MainFragmentDirections.actionShowDetailFragment(character.id)
+                    val action = MainFragmentDirections.actionShowDetailFragment(character)
                     it.findNavController().navigate(action)
                 }
 
-                binding.root.tag = character.id
                 binding.setVariable(BR.character,character)
                 binding.setVariable(BR.clickListener, clickListener)
                 binding.executePendingBindings()
