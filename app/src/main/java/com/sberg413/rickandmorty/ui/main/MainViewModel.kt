@@ -9,7 +9,6 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.repository.CharacterRepository
-import com.sberg413.rickandmorty.utils.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -27,26 +26,18 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     val listData: LiveData<PagingData<Character>> get() = _listData
     private var _listData = MutableLiveData<PagingData<Character>>()
 
-    val navigateToDetails : LiveData<Event<Character>> get() = _navigateToDetails
-    private var _navigateToDetails = MutableLiveData<Event<Character>>()
-
     init{
         updateCharacterList(null)
-    }
-
-    fun userClickOnCharacter(character: Character) {
-        Log.d(TAG, "clicked id = $character")
-        _navigateToDetails.value = Event(character)  // Trigger the event by setting a new Event as a new value
     }
 
     fun updateCharacterList(name: String?) {
         viewModelScope.launch {
             _isLoading.value = true
             withContext(Dispatchers.IO) {
-                characterRepository.getCharacterList(name).cachedIn(this).apply {
-                    _isLoading.postValue(false)
+                characterRepository.getCharacterList(name).cachedIn(this@launch).apply {
                     collectLatest {
                         _listData.postValue(it)
+                        _isLoading.postValue(false)
                     }
                     catch {
                         Log.e(TAG, "updateCharacterList: a network error occurred!")
