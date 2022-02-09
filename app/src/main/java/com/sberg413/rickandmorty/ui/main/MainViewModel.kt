@@ -39,7 +39,6 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
                         _listData.postValue(it)
                         _isLoading.postValue(false)
                     }
-                    // cachedIn(this@launch)
                     catch {
                         Log.e(TAG, "updateCharacterList: a network error occurred!")
                     }
