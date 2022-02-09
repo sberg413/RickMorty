@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
-    characterRepository: CharacterRepository,
+    private val characterRepository: CharacterRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -25,15 +25,15 @@ class DetailViewModel @Inject constructor(
         _characterData.value = savedStateHandle.get<Character>("character")
     }
 
-    private val _locationData = characterData.switchMap { character ->
-        Log.d(TAG, "character = $character")
-        val locationId = character.location.url.replace(Regex(".*/"), "")
-        characterRepository.getLocationLiveData(locationId)
-    }
+    private val _locationData = getLocation()
 
-//    fun initWithCharacter(character: Character) {
-//        _characterData.value = character
-//    }
+    private fun getLocation() : LiveData<Location>{
+        return characterData.switchMap { character ->
+            Log.d(TAG, "character = $character")
+            val locationId = character.location.url.replace(Regex(".*/"), "")
+            characterRepository.getLocation(locationId)
+        }
+    }
 
     companion object {
         private const val TAG = "DetailViewModel"

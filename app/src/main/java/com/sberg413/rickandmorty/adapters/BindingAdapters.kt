@@ -4,7 +4,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CircleCrop
 
 object BindingAdapters {
 
@@ -14,7 +13,7 @@ object BindingAdapters {
         if (image != null) {
             Glide.with(view.context)
                 .load(image)
-                .transform(CircleCrop())
+                // .transform(CircleCrop())
                 .into(view)
         }
     }

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.navArgs
 import com.sberg413.rickandmorty.databinding.DetailFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 

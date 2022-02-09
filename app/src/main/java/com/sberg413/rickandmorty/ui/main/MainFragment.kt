@@ -9,12 +9,14 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
@@ -36,11 +38,15 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val layoutManager = LinearLayoutManager(requireContext())
+        val divider = DividerItemDecoration(requireContext(), layoutManager.orientation)
+
         binding?.apply {
 
             // characterAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
             recyclerMain.adapter = characterAdapter
-            recyclerMain.layoutManager = LinearLayoutManager(requireContext())
+            recyclerMain.layoutManager = layoutManager
+            recyclerMain.addItemDecoration(divider)
             lifecycleOwner = viewLifecycleOwner
             viewModel = mainViewModel
 
