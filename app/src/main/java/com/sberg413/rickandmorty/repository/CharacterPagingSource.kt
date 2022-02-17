@@ -10,14 +10,15 @@ import java.io.IOException
 
 class CharacterPagingSource(
     private val apiService: ApiService,
-    private val queryName: String?
+    private val queryName: String?,
+    private val queryStatus: String?
 ) : PagingSource<Int, Character>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Character> {
         return try {
             // Start refresh at page 1 if undefined.
             val page = params.key ?: STARTING_PAGE_INDEX
-            val characterList = apiService.getCharacterList(page, queryName)
+            val characterList = apiService.getCharacterList(page, queryName, queryStatus)
             Log.d(TAG, "Characters = $characterList")
             LoadResult.Page( data = characterList.results,
                 prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1,

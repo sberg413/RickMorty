@@ -13,10 +13,11 @@ import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiService) : CharacterRepository {
 
-    override fun getCharacterList(name: String?) : Flow<PagingData<Character>> {
+    override fun getCharacterList(name: String?, status: String?) : Flow<PagingData<Character>> {
+        Log.d(TAG,"getCharacterList() name= $name | status= $status ")
         return Pager(
             config = PagingConfig( pageSize = 20, enablePlaceholders = false),
-            pagingSourceFactory = { CharacterPagingSource(apiService, name) } )
+            pagingSourceFactory = { CharacterPagingSource(apiService, name, status) } )
             .flow
     }
 

@@ -2,15 +2,17 @@ package com.sberg413.rickandmorty.ui.main
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -32,6 +34,7 @@ class MainFragment : Fragment() {
     ): View? {
         binding = MainFragmentBinding.inflate(
             LayoutInflater.from(requireContext()), container, false)
+        setHasOptionsMenu(true)
         return binding?.root
     }
 
@@ -52,35 +55,66 @@ class MainFragment : Fragment() {
 
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-                    Log.d(TAG, "query = $query")
-                    query?.let {
-                        mainViewModel.updateCharacterList(it)
-                    }
+//                    Log.d(TAG, "query = $query")
+//                    query?.let {
+//                        // mainViewModel.updateCharacterList(it)
+//                        mainViewModel.setSearchFilter(it)
+//                    }
                     return false
                 }
 
                 override fun onQueryTextChange(newText: String?): Boolean {
                     Log.d(TAG, "newText = $newText")
+                    mainViewModel.setSearchFilter(newText)
                     return false
                 }
             })
 
             searchBar.setOnCloseListener {
                 searchBar.setQuery("", false)
-                mainViewModel.updateCharacterList("")
+                // mainViewModel.updateCharacterList("")
                 false
             }
 
             // Activities can use lifecycleScope directly, but Fragments should instead use
             // viewLifecycleOwner.lifecycleScope.
-            mainViewModel.listData.observe(viewLifecycleOwner, { pagingData ->
+            mainViewModel.listData.observe(viewLifecycleOwner) { pagingData ->
                 lifecycleScope.launch {
                     Log.d(TAG, "collectLatest = $pagingData")
                     characterAdapter.submitData(pagingData)
                 }
-            })
+            }
         }
     }
+
+    private val spinnerListener = object : AdapterView.OnItemSelectedListener {
+        override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+            val filterVal = parent.adapter.getItem(position) as String
+            // Toast.makeText(requireContext(), " Selected: $filterVal", Toast.LENGTH_SHORT).show()
+            mainViewModel.setSatusFilter(filterVal)
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>?) {}
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+
+        val item = menu.findItem(R.id.spinner)
+        val spinner = item.actionView as Spinner
+        spinner.onItemSelectedListener = spinnerListener
+        spinner.adapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.filter_options,
+            android.R.layout.simple_spinner_item
+        ).apply {
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        }
+    }
+
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return super.onOptionsItemSelected(item)
+//    }
 
     override fun onDestroy() {
         super.onDestroy()
