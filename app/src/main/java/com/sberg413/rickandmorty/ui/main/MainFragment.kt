@@ -33,7 +33,7 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = MainFragmentBinding.inflate(
-            LayoutInflater.from(requireContext()), container, false)
+            inflater, container, false)
         setHasOptionsMenu(true)
         return binding?.root
     }
@@ -97,6 +97,7 @@ class MainFragment : Fragment() {
         override fun onNothingSelected(parent: AdapterView<*>?) {}
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
 
