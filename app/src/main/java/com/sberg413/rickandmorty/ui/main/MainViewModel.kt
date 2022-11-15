@@ -21,26 +21,22 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     val isLoading: LiveData<Boolean> get() = _isLoading
     private val _isLoading = MutableLiveData<Boolean>()
 
-    private val statusFilterFlow =  MutableStateFlow<StatusFilter>(NoStatusFilter)
+    val statusFilterFlow: StateFlow<StatusFilter> get() = _statusFilterFlow
+    private val _statusFilterFlow =  MutableStateFlow(NoStatusFilter)
 
-    private val searchFilterFlow =  MutableStateFlow<SearchFilter>(NoSearchFilter)
+    private val _searchFilterFlow =  MutableStateFlow(NoSearchFilter)
 
     val listData: LiveData<PagingData<Character>>
         get() = _listData
     private val _listData = MutableLiveData<PagingData<Character>>()
-//        statusFilterFlow.flatMapLatest{ statusFilter ->
-//            characterRepository.getCharacterList(null, statusFilter.status)
-//                .cachedIn(viewModelScope)
-//                .flowOn(Dispatchers.IO)
-//        }.asLiveData()
 
     init{
         // This starts the collecting of our filter flows
         // and updates the character list accordingly.
         viewModelScope.launch {
             combineTransform<StatusFilter, SearchFilter, PagingData<Character>>(
-                statusFilterFlow,
-                searchFilterFlow
+                _statusFilterFlow,
+                _searchFilterFlow
             ) { statusFilter, searchFilter ->
                 Log.d(TAG, "in combine transfer ...")
                 updateCharacterList(searchFilter.search, statusFilter.status)
@@ -65,14 +61,14 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     }
 
     fun setSatusFilter(status: String) {
-        statusFilterFlow.value =
+        _statusFilterFlow.value =
             if (status.endsWith("all", true))
                 NoStatusFilter
             else StatusFilter(status)
     }
 
     fun setSearchFilter(search: String?) {
-        searchFilterFlow.value =
+        _searchFilterFlow.value =
             if (search.isNullOrBlank())
                 NoSearchFilter
             else SearchFilter(search)

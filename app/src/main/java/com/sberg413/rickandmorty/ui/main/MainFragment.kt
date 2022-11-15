@@ -17,6 +17,7 @@ import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 
@@ -55,11 +56,6 @@ class MainFragment : Fragment() {
 
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
-//                    Log.d(TAG, "query = $query")
-//                    query?.let {
-//                        // mainViewModel.updateCharacterList(it)
-//                        mainViewModel.setSearchFilter(it)
-//                    }
                     return false
                 }
 
@@ -72,7 +68,6 @@ class MainFragment : Fragment() {
 
             searchBar.setOnCloseListener {
                 searchBar.setQuery("", false)
-                // mainViewModel.updateCharacterList("")
                 false
             }
 
@@ -90,7 +85,7 @@ class MainFragment : Fragment() {
     private val spinnerListener = object : AdapterView.OnItemSelectedListener {
         override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
             val filterVal = parent.adapter.getItem(position) as String
-            // Toast.makeText(requireContext(), " Selected: $filterVal", Toast.LENGTH_SHORT).show()
+            Log.d(TAG," Selected: $filterVal")
             mainViewModel.setSatusFilter(filterVal)
         }
 
@@ -100,22 +95,19 @@ class MainFragment : Fragment() {
     @Deprecated("Deprecated in Java")
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.main_menu, menu)
-
-        val item = menu.findItem(R.id.spinner)
-        val spinner = item.actionView as Spinner
-        spinner.onItemSelectedListener = spinnerListener
-        spinner.adapter = ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.filter_options,
-            android.R.layout.simple_spinner_item
-        ).apply {
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        (menu.findItem(R.id.spinner)?.actionView as Spinner).apply {
+            onItemSelectedListener = spinnerListener
+            adapter = ArrayAdapter.createFromResource(
+                        requireContext(),
+                        R.array.filter_options,
+                        android.R.layout.simple_spinner_item
+                    ).apply {
+                        setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    }
+            setSelection( resources.getStringArray(R.array.filter_options)
+                    .indexOf(mainViewModel.statusFilterFlow.value.status) )
         }
     }
-
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return super.onOptionsItemSelected(item)
-//    }
 
     override fun onDestroy() {
         super.onDestroy()
