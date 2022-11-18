@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CharacterRepository {
 
-    fun getCharacterList( name: String?): Flow<PagingData<Character>>
+
+    fun getCharacterList( search: String?, status: String?): Flow<PagingData<Character>>
     fun getLocation(id: String) : LiveData<Location>
 }

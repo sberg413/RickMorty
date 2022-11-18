@@ -37,9 +37,10 @@ class DetailFragment : Fragment() {
             it.executePendingBindings()
         }
 
-        detailViewModel.characterData.observe(this, {
-            (requireActivity() as AppCompatActivity).supportActionBar?.title = ( "${it.name} Details")
-        })
+        detailViewModel.characterData.observe(viewLifecycleOwner) {
+            (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                ("${it.name} Details")
+        }
 
     }
 
