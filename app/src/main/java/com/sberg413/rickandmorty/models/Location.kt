@@ -10,7 +10,7 @@ data class Location(
     val created: String
 ) {
 
-    fun getResidentCount(): Int {
-        return residents?.size ?: 0
-    }
+    val residentCount: Int
+        get() = residents?.size ?: 0
+
 }

@@ -12,7 +12,7 @@
 <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.detail.DetailActivity">
+    tools:context=".MainActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/character_cl"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
             android:layout_marginTop="30dp"
-            android:text="Location:"
+            android:text="@string/location"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
             android:layout_marginTop="10dp"
-            android:text="Type:"
+            android:text="@string/type"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/location_text" />
 
@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
             android:layout_marginTop="10dp"
-            android:text="Dimenson:"
+            android:text="@string/dimenson"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/type_text" />
 
@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="60dp"
             android:layout_marginTop="10dp"
-            android:text="Number of Residents:"
+            android:text="@string/number_of_residents"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dimension_text" />
 
@@ -124,7 +124,7 @@
             tools:text="TextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/dimension"
-            app:countResidents="@{viewmodel.locationData.residents}"/>
+            android:text="@{Integer.toString(viewmodel.locationData.residentCount)}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
