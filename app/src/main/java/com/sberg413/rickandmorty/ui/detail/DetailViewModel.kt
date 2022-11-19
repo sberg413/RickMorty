@@ -7,13 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
 import com.sberg413.rickandmorty.repository.CharacterRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import javax.inject.Inject
 
-@HiltViewModel
-class DetailViewModel @Inject constructor(
+class DetailViewModel(
     private val characterRepository: CharacterRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {

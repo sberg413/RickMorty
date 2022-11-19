@@ -2,20 +2,19 @@ package com.sberg413.rickandmorty.di
 
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.repository.CharacterRepositoryImpl
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.components.SingletonComponent
+import com.sberg413.rickandmorty.ui.detail.DetailViewModel
+import com.sberg413.rickandmorty.ui.main.MainViewModel
+import org.koin.androidx.viewmodel.dsl.viewModelOf
+import org.koin.core.module.dsl.singleOf
+import org.koin.dsl.bind
+import org.koin.dsl.module
 
-@Module
-@InstallIn(ViewModelComponent::class)
-abstract class RepositoryModule
-{
+val RepositoryModule = module {
 
-    @Binds
-    abstract fun bindCharacterRepository(
-        characterRepositoryImpl: CharacterRepositoryImpl
-    ): CharacterRepository
+
+    singleOf(::CharacterRepositoryImpl) bind CharacterRepository::class
+
+    viewModelOf( ::MainViewModel)
+    viewModelOf( ::DetailViewModel )
 
 }

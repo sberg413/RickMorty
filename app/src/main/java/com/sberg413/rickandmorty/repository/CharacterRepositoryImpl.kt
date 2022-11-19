@@ -8,9 +8,8 @@ import com.sberg413.rickandmorty.api.ApiService
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiService) : CharacterRepository {
+class CharacterRepositoryImpl(private val apiService: ApiService) : CharacterRepository {
 
     override fun getCharacterList(search: String?, status: String?) : Flow<PagingData<Character>> {
         Log.d(TAG,"getCharacterList() name= $search | status= $status ")

@@ -10,11 +10,8 @@ import com.sberg413.rickandmorty.BR
 import com.sberg413.rickandmorty.databinding.CharacterRowBinding
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.utils.CharacterComparator
-import dagger.hilt.android.scopes.ActivityScoped
-import javax.inject.Inject
 
-@ActivityScoped
-class CharacterAdapter @Inject constructor() :
+class CharacterAdapter :
     PagingDataAdapter<Character, CharacterAdapter.MyViewHolder>(CharacterComparator) {
 
     private var characterClickListener: ((Character)->Unit)? = null

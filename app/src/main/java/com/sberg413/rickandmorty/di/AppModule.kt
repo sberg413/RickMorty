@@ -3,50 +3,34 @@ package com.sberg413.rickandmorty.di
 import com.sberg413.rickandmorty.BuildConfig
 import com.sberg413.rickandmorty.api.ApiService
 import com.squareup.moshi.Moshi
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
-import javax.inject.Singleton
 
-@Module
-@InstallIn(SingletonComponent::class)
-class AppModule {
+val AppModule = module(){
 
-    @Provides
-    fun provideBaseUrl() = BuildConfig.BASE_URL
+    factory {
+        Moshi.Builder().build()
+    }
 
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder().addInterceptor(
-                HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                }).build()
+    factory {
+        OkHttpClient.Builder().addInterceptor(
+            HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            }).build()
+    }
 
-//    @Provides
-//    @Singleton
-//    fun providesGson(): Gson = GsonBuilder().setLenient().create()
-
-    @Provides
-    @Singleton
-    fun providesMoshi(): Moshi = Moshi.Builder().build()
-
-
-    @Provides
-    @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi, BASE_URL: String): Retrofit =
+    single {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(okHttpClient)
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .baseUrl(BuildConfig.BASE_URL)
+            .client(get())
+            .addConverterFactory(MoshiConverterFactory.create(get()))
             .build()
+    }
 
-    @Provides
-    @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
-
+    single {
+        get<Retrofit>().create(ApiService::class.java)
+    }
 }

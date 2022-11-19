@@ -7,14 +7,11 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.sberg413.rickandmorty.models.*
 import com.sberg413.rickandmorty.repository.CharacterRepository
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class MainViewModel @Inject constructor(private val characterRepository: CharacterRepository): ViewModel() {
+class MainViewModel(private val characterRepository: CharacterRepository): ViewModel() {
 
     val isLoading: StateFlow<Boolean> get() = _isLoading
     private val _isLoading = MutableStateFlow(true)
