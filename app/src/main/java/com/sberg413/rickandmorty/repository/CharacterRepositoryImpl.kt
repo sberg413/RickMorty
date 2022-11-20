@@ -8,7 +8,9 @@ import com.sberg413.rickandmorty.api.ApiService
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
 import kotlinx.coroutines.flow.Flow
+import org.koin.core.annotation.Factory
 
+@Factory
 class CharacterRepositoryImpl(private val apiService: ApiService) : CharacterRepository {
 
     override fun getCharacterList(search: String?, status: String?) : Flow<PagingData<Character>> {

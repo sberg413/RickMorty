@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
 import com.sberg413.rickandmorty.repository.CharacterRepository
+import org.koin.android.annotation.KoinViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 
+@KoinViewModel
 class DetailViewModel(
     private val characterRepository: CharacterRepository,
     savedStateHandle: SavedStateHandle
