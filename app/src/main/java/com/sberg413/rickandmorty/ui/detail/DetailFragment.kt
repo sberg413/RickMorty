@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.sberg413.rickandmorty.databinding.DetailFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -37,9 +38,12 @@ class DetailFragment : Fragment() {
             it.executePendingBindings()
         }
 
-        detailViewModel.characterData.observe(viewLifecycleOwner) {
-            (requireActivity() as AppCompatActivity).supportActionBar?.title =
-                ("${it.name} Details")
+        lifecycleScope.launchWhenStarted {
+            detailViewModel.characterData.collect {
+                if (it == null) return@collect
+                (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                    ("${it.name} Details")
+            }
         }
 
     }
