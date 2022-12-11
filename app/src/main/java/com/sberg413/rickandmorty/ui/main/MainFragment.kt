@@ -10,13 +10,15 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
+import com.sberg413.rickandmorty.models.Character
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import java.util.*
 import javax.inject.Inject
 
@@ -45,6 +47,10 @@ class MainFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         val divider = DividerItemDecoration(requireContext(), layoutManager.orientation)
 
+        characterAdapter.setCharacterClickListener { character ->
+            mainViewModel.updateStateWithCharacterClicked(character)
+        }
+
         binding?.apply {
 
             // characterAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
@@ -71,12 +77,20 @@ class MainFragment : Fragment() {
                 false
             }
 
-            // Activities can use lifecycleScope directly, but Fragments should instead use
-            // viewLifecycleOwner.lifecycleScope.
-            mainViewModel.listData.observe(viewLifecycleOwner) { pagingData ->
-                lifecycleScope.launch {
+            lifecycleScope.launchWhenStarted {
+                mainViewModel.listData.collectLatest { pagingData ->
                     Log.d(TAG, "collectLatest = $pagingData")
                     characterAdapter.submitData(pagingData)
+                }
+            }
+
+            lifecycleScope.launchWhenStarted {
+                mainViewModel.characterClicked.collectLatest {
+                    if (it != null) {
+                        val action = MainFragmentDirections.actionShowDetailFragment(it)
+                        findNavController().navigate(action)
+                        mainViewModel.updateStateWithCharacterClicked(null)
+                    }
                 }
             }
         }

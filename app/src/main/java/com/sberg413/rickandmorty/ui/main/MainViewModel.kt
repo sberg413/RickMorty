@@ -1,8 +1,6 @@
 package com.sberg413.rickandmorty.ui.main
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -18,27 +16,28 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(private val characterRepository: CharacterRepository): ViewModel() {
 
-    val isLoading: LiveData<Boolean> get() = _isLoading
-    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: StateFlow<Boolean> get() = _isLoading
+    private val _isLoading = MutableStateFlow(true)
+
+    val characterClicked: StateFlow<Character?> get() = _characterClicked
+    private val _characterClicked = MutableStateFlow<Character?>(null)
 
     val statusFilterFlow: StateFlow<StatusFilter> get() = _statusFilterFlow
     private val _statusFilterFlow =  MutableStateFlow(NoStatusFilter)
 
     private val _searchFilterFlow =  MutableStateFlow(NoSearchFilter)
 
-    val listData: LiveData<PagingData<Character>>
+    val listData: Flow<PagingData<Character>>
         get() = _listData
-    private val _listData = MutableLiveData<PagingData<Character>>()
+    private val _listData: MutableStateFlow<PagingData<Character>> = MutableStateFlow(PagingData.empty())
 
     init{
         // This starts the collecting of our filter flows
         // and updates the character list accordingly.
         viewModelScope.launch {
-            combineTransform<StatusFilter, SearchFilter, PagingData<Character>>(
-                _statusFilterFlow,
-                _searchFilterFlow
-            ) { statusFilter, searchFilter ->
+            combine(_statusFilterFlow,_searchFilterFlow) { statusFilter, searchFilter ->
                 Log.d(TAG, "in combine transfer ...")
+                _isLoading.value = true
                 updateCharacterList(searchFilter.search, statusFilter.status)
             }.collect()
         }
@@ -53,9 +52,9 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
                 .catch {
                     Log.e(TAG, "updateCharacterList: a network error occurred!")
                 }
-                .collectLatest {
-                    _listData.postValue(it)
-                    _isLoading.postValue(false)
+                .collect {
+                    _isLoading.value = false
+                    _listData.value = it
                 }
         }
     }
@@ -72,6 +71,10 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
             if (search.isNullOrBlank())
                 NoSearchFilter
             else SearchFilter(search)
+    }
+
+    fun updateStateWithCharacterClicked(character: Character?) {
+        _characterClicked.value = character
     }
 
     companion object {
