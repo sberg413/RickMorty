@@ -9,17 +9,16 @@ import android.widget.Spinner
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
+import com.sberg413.rickandmorty.models.Character
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -47,6 +46,10 @@ class MainFragment : Fragment() {
 
         val layoutManager = LinearLayoutManager(requireContext())
         val divider = DividerItemDecoration(requireContext(), layoutManager.orientation)
+
+        characterAdapter.setCharacterClickListener { character ->
+            mainViewModel.updateStateWithCharacterClicked(character)
+        }
 
         binding?.apply {
 
@@ -78,6 +81,16 @@ class MainFragment : Fragment() {
                 mainViewModel.listData.collectLatest { pagingData ->
                     Log.d(TAG, "collectLatest = $pagingData")
                     characterAdapter.submitData(pagingData)
+                }
+            }
+
+            lifecycleScope.launchWhenStarted {
+                mainViewModel.characterClicked.collectLatest {
+                    if (it != null) {
+                        val action = MainFragmentDirections.actionShowDetailFragment(it)
+                        findNavController().navigate(action)
+                        mainViewModel.updateStateWithCharacterClicked(null)
+                    }
                 }
             }
         }

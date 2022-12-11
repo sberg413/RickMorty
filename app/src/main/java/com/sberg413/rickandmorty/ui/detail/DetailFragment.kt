@@ -17,9 +17,6 @@ class DetailFragment : Fragment() {
     private val detailViewModel: DetailViewModel by viewModels()
     private var binding: DetailFragmentBinding? = null
 
-    // Passing directly into the viewModel with SavedStateHandle
-    // val args: DetailFragmentArgs by navArgs()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

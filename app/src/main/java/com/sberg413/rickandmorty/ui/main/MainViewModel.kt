@@ -19,6 +19,9 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     val isLoading: StateFlow<Boolean> get() = _isLoading
     private val _isLoading = MutableStateFlow(true)
 
+    val characterClicked: StateFlow<Character?> get() = _characterClicked
+    private val _characterClicked = MutableStateFlow<Character?>(null)
+
     val statusFilterFlow: StateFlow<StatusFilter> get() = _statusFilterFlow
     private val _statusFilterFlow =  MutableStateFlow(NoStatusFilter)
 
@@ -68,6 +71,10 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
             if (search.isNullOrBlank())
                 NoSearchFilter
             else SearchFilter(search)
+    }
+
+    fun updateStateWithCharacterClicked(character: Character?) {
+        _characterClicked.value = character
     }
 
     companion object {
