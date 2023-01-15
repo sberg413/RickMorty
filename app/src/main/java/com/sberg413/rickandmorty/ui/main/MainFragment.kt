@@ -118,8 +118,11 @@ class MainFragment : Fragment() {
                     ).apply {
                         setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     }
-            setSelection( resources.getStringArray(R.array.filter_options)
-                    .indexOf(mainViewModel.statusFilterFlow.value.status) )
+            setSelection(
+                mainViewModel.getSelectedStatusIndex(
+                    resources.getStringArray(R.array.filter_options)
+                )
+            )
         }
     }
 
