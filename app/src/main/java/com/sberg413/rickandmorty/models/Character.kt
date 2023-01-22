@@ -10,10 +10,10 @@ data class Character(
     val species: String,
     val type: String,
     val gender: String,
-    val origin: Origin,
-    val location: LocationShort,
+    val originId: String,
+    val locationId: String,
     val image: String,
     val name: String,
-    val url: String,
-    val created: String
+    // val url: String,
+    // val created: String
 ) : Parcelable
