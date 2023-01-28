@@ -8,7 +8,6 @@ import androidx.paging.cachedIn
 import com.sberg413.rickandmorty.models.*
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -31,9 +30,11 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     @OptIn(FlowPreview::class)
     val listData: StateFlow<PagingData<Character>> = _characterFilterFlow.mapLatest {
         Log.d(TAG, "in combine transfer ...")
-        _isLoading.value = true
         characterRepository.getCharacterList(it.searchFilter.search, it.statusFilter.status)
     }.flattenMerge()
+        .onStart {
+            _isLoading.value = true
+        }
         .onEach {
             _isLoading.value = false
         }
