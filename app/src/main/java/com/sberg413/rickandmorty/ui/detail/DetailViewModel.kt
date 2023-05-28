@@ -19,7 +19,7 @@ class DetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     val characterData: StateFlow<Character?> =
-        savedStateHandle.getStateFlow<Character?>("character", null)
+        savedStateHandle.getStateFlow<Character?>(KEY_CHARACTER, null)
 
     val locationData: StateFlow<Location?> = characterData.map { character ->
         if (character == null) return@map null
@@ -32,5 +32,7 @@ class DetailViewModel @Inject constructor(
 
     companion object {
         private const val TAG = "DetailViewModel"
+
+        const val KEY_CHARACTER = "character"
     }
 }
