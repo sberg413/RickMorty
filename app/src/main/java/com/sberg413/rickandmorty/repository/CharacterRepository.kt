@@ -1,6 +1,5 @@
 package com.sberg413.rickandmorty.repository
 
-import androidx.lifecycle.LiveData
 import androidx.paging.PagingData
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
@@ -10,5 +9,5 @@ interface CharacterRepository {
 
 
     fun getCharacterList( search: String?, status: String?): Flow<PagingData<Character>>
-    fun getLocation(id: String) : LiveData<Location>
+    suspend fun getLocation(id: String) : Location
 }

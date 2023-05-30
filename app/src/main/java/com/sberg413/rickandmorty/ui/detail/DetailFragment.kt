@@ -7,17 +7,18 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.sberg413.rickandmorty.databinding.DetailFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DetailFragment : Fragment() {
 
     private val detailViewModel: DetailViewModel by viewModels()
     private var binding: DetailFragmentBinding? = null
-
-    // Passing directly into the viewModel with SavedStateHandle
-    // val args: DetailFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,9 +38,14 @@ class DetailFragment : Fragment() {
             it.executePendingBindings()
         }
 
-        detailViewModel.characterData.observe(viewLifecycleOwner) {
-            (requireActivity() as AppCompatActivity).supportActionBar?.title =
-                ("${it.name} Details")
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                detailViewModel.characterData.collect {
+                    if (it == null) return@collect
+                    (requireActivity() as AppCompatActivity).supportActionBar?.title =
+                        ("${it.name} Details")
+                }
+            }
         }
 
     }

@@ -9,13 +9,17 @@ import android.widget.Spinner
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
@@ -45,6 +49,10 @@ class MainFragment : Fragment() {
         val layoutManager = LinearLayoutManager(requireContext())
         val divider = DividerItemDecoration(requireContext(), layoutManager.orientation)
 
+        characterAdapter.setCharacterClickListener { character ->
+            mainViewModel.updateStateWithCharacterClicked(character)
+        }
+
         binding?.apply {
 
             // characterAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
@@ -71,12 +79,24 @@ class MainFragment : Fragment() {
                 false
             }
 
-            // Activities can use lifecycleScope directly, but Fragments should instead use
-            // viewLifecycleOwner.lifecycleScope.
-            mainViewModel.listData.observe(viewLifecycleOwner) { pagingData ->
-                lifecycleScope.launch {
-                    Log.d(TAG, "collectLatest = $pagingData")
-                    characterAdapter.submitData(pagingData)
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    mainViewModel.listData.collectLatest { pagingData ->
+                        Log.d(TAG, "collectLatest = $pagingData")
+                        characterAdapter.submitData(pagingData)
+                    }
+                }
+            }
+
+            lifecycleScope.launch {
+                repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    mainViewModel.characterClicked.collectLatest {
+                        if (it != null) {
+                            val action = MainFragmentDirections.actionShowDetailFragment(it)
+                            findNavController().navigate(action)
+                            mainViewModel.updateStateWithCharacterClicked(null)
+                        }
+                    }
                 }
             }
         }
@@ -104,8 +124,11 @@ class MainFragment : Fragment() {
                     ).apply {
                         setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                     }
-            setSelection( resources.getStringArray(R.array.filter_options)
-                    .indexOf(mainViewModel.statusFilterFlow.value.status) )
+            setSelection(
+                mainViewModel.getSelectedStatusIndex(
+                    resources.getStringArray(R.array.filter_options)
+                )
+            )
         }
     }
 
