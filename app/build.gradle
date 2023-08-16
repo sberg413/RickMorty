@@ -66,7 +66,7 @@ dependencies {
 
     def lifecycle_version = '2.6.1'
     def coroutine_version = '1.6.4'
-    def fragment_version = '1.6.0'
+    def fragment_version = '1.6.1'
     def navigation_version = '2.6.0'
 
     implementation 'androidx.core:core-ktx:1.10.1'
@@ -86,7 +86,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
     // Jetpack paging
-    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
+    implementation 'androidx.paging:paging-runtime-ktx:3.2.0'
 
     // Retrofit with Gson converter
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
