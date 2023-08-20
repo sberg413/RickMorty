@@ -15,6 +15,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
@@ -61,6 +62,9 @@ class MainFragment : Fragment() {
             recyclerMain.addItemDecoration(divider)
             lifecycleOwner = viewLifecycleOwner
             viewModel = mainViewModel
+            swiperefresh.setOnRefreshListener {
+                characterAdapter.refresh()
+            }
 
             searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
@@ -84,6 +88,7 @@ class MainFragment : Fragment() {
                     mainViewModel.listData.collectLatest { pagingData ->
                         Log.d(TAG, "collectLatest = $pagingData")
                         characterAdapter.submitData(pagingData)
+                        binding?.swiperefresh?.isRefreshing = false
                     }
                 }
             }
