@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import okhttp3.Dispatcher
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiService, private val dispatcher: CoroutineDispatcher = Dispatchers.IO) :
@@ -23,8 +22,12 @@ class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiSer
         Log.d(TAG,"getCharacterList() name= $search | status= $status ")
         val regex = "https://.*/".toRegex()
         return Pager(
-            config = PagingConfig( pageSize = 20, enablePlaceholders = false),
-            pagingSourceFactory = { CharacterPagingSource(apiService, search, status) } )
+            config = PagingConfig(
+                pageSize = NETWORK_PAGE_SIZE,
+                enablePlaceholders = false
+            ),
+            pagingSourceFactory = { CharacterPagingSource(apiService, search, status) }
+        )
             .flow
             .map { pagingData ->
                pagingData.map {
@@ -42,7 +45,7 @@ class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiSer
                        it.name)
                }
             }
-            .flowOn(dispatcher)
+            // .flowOn(dispatcher)
     }
 
     override suspend fun getLocation(id: String): Location {
@@ -58,5 +61,6 @@ class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiSer
 
     companion object {
         private const val TAG = "CharacterRepositoryImpl"
+        const val NETWORK_PAGE_SIZE = 20
     }
 }

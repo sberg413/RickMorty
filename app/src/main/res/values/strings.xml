@@ -5,6 +5,9 @@
     <string name="number_of_residents">Number of Residents:</string>
     <string name="location">Location:</string>
     <string name="status_filter">Status Filter</string>
+    <string name="retry">Retry</string>
+    <string name="no_results">No Results Found!</string>
+    <string name="search_hint">Character Name</string>
 
     <array name="filter_options">
         <item>All</item>
