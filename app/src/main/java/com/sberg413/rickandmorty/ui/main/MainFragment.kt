@@ -3,33 +3,36 @@ package com.sberg413.rickandmorty.ui.main
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.EditorInfo
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.adapters.CharacterAdapter
+import com.sberg413.rickandmorty.adapters.CharacterLoadStateAdapter
 import com.sberg413.rickandmorty.databinding.MainFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainFragment : Fragment() {
-
-    @Inject lateinit var characterAdapter: CharacterAdapter
 
     private val mainViewModel: MainViewModel by viewModels()
     private var binding: MainFragmentBinding? = null
@@ -47,47 +50,51 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val layoutManager = LinearLayoutManager(requireContext())
-        val divider = DividerItemDecoration(requireContext(), layoutManager.orientation)
+        // val layoutManager = LinearLayoutManager(requireContext())
+        val divider = DividerItemDecoration(requireContext(), RecyclerView.VERTICAL)
 
-        characterAdapter.setCharacterClickListener { character ->
+        val characterAdapter = CharacterAdapter { character ->
             mainViewModel.updateStateWithCharacterClicked(character)
         }
 
         binding?.apply {
 
-            // characterAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-            recyclerMain.adapter = characterAdapter
-            recyclerMain.layoutManager = layoutManager
+            recyclerMain.adapter = characterAdapter.withLoadStateHeaderAndFooter(
+                header = CharacterLoadStateAdapter { characterAdapter.retry() },
+                footer = CharacterLoadStateAdapter { characterAdapter.retry() }
+            )
             recyclerMain.addItemDecoration(divider)
             lifecycleOwner = viewLifecycleOwner
-            viewModel = mainViewModel
             swiperefresh.setOnRefreshListener {
                 characterAdapter.refresh()
             }
 
-            searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-                override fun onQueryTextSubmit(query: String?): Boolean {
-                    return false
+            searchBar.setOnEditorActionListener { _, actionId, _ ->
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    recyclerMain.scrollToPosition(0)
+                    mainViewModel.setSearchFilter(searchBar.text.trim().toString())
+                    true
+                } else {
+                    false
                 }
-
-                override fun onQueryTextChange(newText: String?): Boolean {
-                    Log.d(TAG, "newText = $newText")
-                    mainViewModel.setSearchFilter(newText)
-                    return false
-                }
-            })
-
-            searchBar.setOnCloseListener {
-                searchBar.setQuery("", false)
-                false
             }
+            searchBar.setOnKeyListener { _, keyCode, event ->
+                if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                    recyclerMain.scrollToPosition(0)
+                    mainViewModel.setSearchFilter(searchBar.text.trim().toString())
+                    true
+                } else {
+                    false
+                }
+            }
+
+            retryButton.setOnClickListener { characterAdapter.retry() }
 
             lifecycleScope.launch {
                 repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    mainViewModel.listData.collectLatest { pagingData ->
+                    mainViewModel.listData.collect { pagingData ->
                         Log.d(TAG, "collectLatest = $pagingData")
-                        characterAdapter.submitData(pagingData)
+                        characterAdapter.submitData( pagingData)
                         binding?.swiperefresh?.isRefreshing = false
                     }
                 }
@@ -101,6 +108,34 @@ class MainFragment : Fragment() {
                             findNavController().navigate(action)
                             mainViewModel.updateStateWithCharacterClicked(null)
                         }
+                    }
+                }
+            }
+
+            lifecycleScope.launch {
+                characterAdapter.loadStateFlow.collect { loadState ->
+                    val isListEmpty = loadState.refresh is LoadState.NotLoading
+                            && characterAdapter.itemCount == 0
+                    // show empty list
+                    emptyList.isVisible = isListEmpty
+                    // Only show the list if refresh succeeds.
+                    recyclerMain.isVisible  = loadState.source.refresh is LoadState.NotLoading
+                    // Show loading spinner during initial load or refresh.
+                    progressBar.isVisible = loadState.source.refresh is LoadState.Loading
+                    // Show the retry state if initial load or refresh fails.
+                    retryButton.isVisible = loadState.source.refresh is LoadState.Error
+
+                    // Toast on any error
+                    val errorState = loadState.source.append as? LoadState.Error
+                        ?: loadState.source.prepend as? LoadState.Error
+                        ?: loadState.append as? LoadState.Error
+                        ?: loadState.prepend as? LoadState.Error
+                    errorState?.let {
+                        Toast.makeText(
+                            requireActivity(),
+                            "ERROR: ${it.error}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
