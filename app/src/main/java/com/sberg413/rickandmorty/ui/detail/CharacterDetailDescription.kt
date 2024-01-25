@@ -1,5 +1,7 @@
 package com.sberg413.rickandmorty.ui.detail
 
+import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,10 +35,12 @@ import com.sberg413.rickandmorty.models.Location
 
 @Composable
 fun CharacterDetailDescription(viewModel: DetailViewModel) {
-    val character by viewModel.characterData.collectAsState()
-    val location by viewModel.locationData.collectAsState()
-    if (character != null && location != null) {
-        CharacterDetailContent(characterData = character!!, locationData = location!!)
+    val uiState by viewModel.uiState.collectAsState()
+    if (uiState.character != null && uiState.location != null) {
+        CharacterDetailContent(
+            characterData = uiState.character!!,
+            locationData = uiState.location!!
+        )
     }
 }
 
@@ -52,20 +57,19 @@ private fun CharacterDetailContent(characterData: Character, locationData: Locat
 
             Text(
                 text = characterData.name,
-//                color = MaterialTheme.colorScheme.surfaceVariant,
-                fontSize = 22.sp,
-                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 18.dp)
             )
 
 
+
             // CharacterDetailRow(label = "Type", data = characterData.type)
-            CharacterDetailRow(label = "Status", data = characterData.status)
-            CharacterDetailRow(label = "Species", data = characterData.species)
-            CharacterDetailRow(label = "Location", data = locationData.name)
-            CharacterDetailRow(label = "Dimension", data = locationData.dimension)
+            CharacterDetailRow(label = R.string.status, data = characterData.status)
+            CharacterDetailRow(label = R.string.species, data = characterData.species)
+            CharacterDetailRow(label = R.string.location, data = locationData.name)
+            CharacterDetailRow(label = R.string.dimenson, data = locationData.dimension)
             // CharacterDetailRow(label = "Number of residents", data = locationData.residentCount.toString())
 
         }
@@ -73,25 +77,28 @@ private fun CharacterDetailContent(characterData: Character, locationData: Locat
 }
 
 @Composable
-private fun CharacterDetailRow(label: String, data: String) {
+private fun CharacterDetailRow(@StringRes label: Int, data: String) {
     Row(
         Modifier
-            .padding(horizontal = 60.dp, vertical = 15.dp)
+            .padding(horizontal = 10.dp, vertical = 15.dp)
             .fillMaxWidth()) {
         Text(
-            text = label,
+            text = stringResource(id = label),
             modifier = Modifier
-                .fillMaxWidth()
                 .weight(1f),
-            textAlign =  TextAlign.Start
+            textAlign =  TextAlign.End
+        )
+        Text(
+            text = ":",
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
         )
 
         Text(
             text = data,
             modifier = Modifier
-                .fillMaxWidth()
                 .weight(1f),
-            textAlign =  TextAlign.End
+            textAlign =  TextAlign.Start
         )
     }
 

@@ -46,17 +46,15 @@ class DetailFragment : Fragment() {
         // detailViewModel.initWithCharacter(args.character)
 
         binding?.let {
-            it.viewmodel = detailViewModel
             it.lifecycleOwner = viewLifecycleOwner
-            it.executePendingBindings()
         }
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                detailViewModel.characterData.collect {
-                    if (it == null) return@collect
+                detailViewModel.uiState.collect {
+                    if (it.character == null) return@collect
                     (requireActivity() as AppCompatActivity).supportActionBar?.title =
-                        ("${it.name} Details")
+                        ("${it.character.name} Details")
                 }
             }
         }
