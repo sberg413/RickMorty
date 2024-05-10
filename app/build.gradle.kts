@@ -108,6 +108,7 @@ dependencies {
     testImplementation(libs.robolectric)
 
     // Coroutine Test
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.kotlinx.coroutines.test)
 }
 
