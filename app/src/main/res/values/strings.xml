@@ -1,10 +1,16 @@
 <resources>
     <string name="app_name">Rick &amp; Morty</string>
     <string name="type">Type:</string>
-    <string name="dimenson">Dimenson:</string>
+    <string name="dimenson">Dimenson</string>
     <string name="number_of_residents">Number of Residents:</string>
-    <string name="location">Location:</string>
+    <string name="location">Location</string>
+    <string name="species">Species</string>
+    <string name="status">Status</string>
     <string name="status_filter">Status Filter</string>
+    <string name="retry">Retry</string>
+    <string name="no_results">No Results Found!</string>
+    <string name="search_hint">Character Name</string>
+    <string name="character_img_content_description">Image of %s</string>
 
     <array name="filter_options">
         <item>All</item>
