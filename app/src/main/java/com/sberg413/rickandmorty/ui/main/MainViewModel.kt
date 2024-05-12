@@ -14,12 +14,17 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
+data class MainUiState(
+    val isLoading: Boolean = false,
+    val currentCharacter: Character? = null,
+    val characterFilter: CharacterFilter = CharacterFilter(NoStatusFilter, NoSearchFilter),
+    val errorMessage: String? = null
+)
+
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class MainViewModel @Inject constructor(private val characterRepository: CharacterRepository): ViewModel() {
-
-//    val isLoading: StateFlow<Boolean> get() = _isLoading
-//    private val _isLoading = MutableStateFlow(true)
 
     val characterClicked: StateFlow<Character?> get() = _characterClicked
     private val _characterClicked = MutableStateFlow<Character?>(null)
@@ -33,12 +38,6 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
         characterRepository.getCharacterList(it.searchFilter.search, it.statusFilter.status)
     }
         .flattenMerge()
-//        .onStart {
-//            _isLoading.value = true
-//        }
-//        .onEach {
-//            _isLoading.value = false
-//        }
         .cachedIn(viewModelScope)
         .catch {
             Log.e(TAG, "updateCharacterList: a network error occurred!")
