@@ -24,11 +24,12 @@ mockitoCore = "5.6.0"
 mockitoInline = "5.2.0"
 lifecycle = "2.7.0"
 navigationVersion = "2.7.7"
-pagingRuntimeKtx = "3.2.1"
+paging = "3.2.1"
 retrofit = "2.9.0"
 robolectric = "4.10.3"
 runner = "1.5.2"
 swiperefreshlayout = "1.1.0"
+benchmarkCommon = "1.2.4"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityKtx" }
@@ -50,7 +51,8 @@ androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifec
 androidx-material3 = { module = "androidx.compose.material3:material3" }
 androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationVersion" }
 androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationVersion" }
-androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "pagingRuntimeKtx" }
+androidx-paging-runtime-ktx = { module = "androidx.paging:paging-runtime-ktx", version.ref = "paging" }
+androidx-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
 androidx-rules = { module = "androidx.test:rules", version.ref = "core" }
 androidx-runner = { module = "androidx.test:runner", version.ref = "runner" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
@@ -74,6 +76,7 @@ mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore
 mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+androidx-benchmark-common = { group = "androidx.benchmark", name = "benchmark-common", version.ref = "benchmarkCommon" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -82,4 +85,4 @@ kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
-navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigationVersion" }
+navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationVersion" }

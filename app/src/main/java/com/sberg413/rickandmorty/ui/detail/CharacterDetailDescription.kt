@@ -1,6 +1,8 @@
 package com.sberg413.rickandmorty.ui.detail
 
+import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,15 +30,19 @@ import com.bumptech.glide.integration.compose.placeholder
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
+import dagger.hilt.android.internal.managers.ViewComponentManager.FragmentContextWrapper
 
 
 @Composable
-fun CharacterDetailDescription(viewModel: DetailViewModel) {
+fun CharacterDetailDescription(viewModel: DetailViewModel, setTitle: (String) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
-    if (uiState.character != null && uiState.location != null) {
+    val character = uiState.character
+    val location = uiState.location
+    if (character != null && location != null) {
+        setTitle( character.name)
         CharacterDetailContent(
-            characterData = uiState.character!!,
-            locationData = uiState.location!!
+            characterData = character,
+            locationData = location
         )
     }
 }
