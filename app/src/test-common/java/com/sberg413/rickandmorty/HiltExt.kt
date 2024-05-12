@@ -36,7 +36,7 @@ import androidx.test.core.app.ApplicationProvider
  */
 inline fun <reified T : Fragment> launchFragmentInHiltContainer(
     fragmentArgs: Bundle? = null,
-    @StyleRes themeResId: Int = androidx.fragment.testing.manifest.R.style.FragmentScenarioEmptyFragmentActivityTheme,
+    @StyleRes themeResId: Int = R.style.FragmentScenarioEmptyFragmentActivityTheme,
     crossinline action: Fragment.() -> Unit = {}
 ) {
     val startActivityIntent = Intent.makeMainActivity(

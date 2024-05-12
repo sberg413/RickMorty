@@ -1,0 +1,137 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'kotlin-parcelize'
+}
+apply plugin: 'dagger.hilt.android.plugin'
+
+android {
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.sberg413.rickandmorty"
+        minSdk 23
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField 'String', 'BASE_URL', '"https://rickandmortyapi.com/api/"'
+    }
+
+    dataBinding {
+        enabled = true
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+        freeCompilerArgs += ["-opt-in=kotlin.RequiresOptIn"]
+    }
+
+    sourceSets {
+        // Common test source
+        androidTest.java.srcDirs += "src/test-common/java"
+        test.java.srcDirs += "src/test-common/java"
+        // Common test resources
+        androidTest.resources.srcDirs += "src/test-common/resources"
+        test.resources.srcDirs += "src/test-common/resources"
+    }
+
+    testOptions {
+        unitTests{
+            returnDefaultValues = true
+            includeAndroidResources = true
+        }
+    }
+
+    namespace 'com.sberg413.rickandmorty'
+}
+
+dependencies {
+
+    def lifecycle_version = '2.6.1'
+    def coroutine_version = '1.6.4'
+    def fragment_version = '1.6.1'
+    def navigation_version = '2.6.0'
+
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+
+    implementation 'androidx.activity:activity-ktx:1.7.2'
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
+    debugImplementation "androidx.fragment:fragment-testing:$fragment_version"
+
+    // Navigation:
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+
+    // Jetpack paging
+    implementation 'androidx.paging:paging-runtime-ktx:3.2.0'
+
+    // Retrofit with Gson converter
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    // implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
+    // OkHttp Logging Interceptor to enable logging
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
+
+    //Coroutines
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    kapt 'com.github.bumptech.glide:compiler:4.12.0'
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    // implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha03'
+    // kapt "androidx.hilt:hilt-compiler:1.0.0"
+    // For local unit tests
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-compiler:$hilt_version"
+
+
+    // Core library
+    androidTestImplementation 'androidx.test:core:1.5.0'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
+    androidTestImplementation 'androidx.test:rules:1.5.0'
+    androidTestImplementation 'androidx.test.ext:junit-ktx:1.1.5'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
+    testImplementation 'androidx.test.ext:junit:1.1.5'
+    testImplementation 'org.mockito:mockito-core:4.2.0'
+    testImplementation 'org.mockito:mockito-inline:2.28.2'
+    testImplementation 'org.robolectric:robolectric:4.9'
+
+    // Coroutine Test
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_version"
+}
+
+kapt {
+    correctErrorTypes true
+}

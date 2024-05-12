@@ -5,15 +5,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.paging.PagingDataAdapter
-import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sberg413.rickandmorty.BR
 import com.sberg413.rickandmorty.databinding.CharacterRowBinding
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.utils.CharacterComparator
+import dagger.hilt.android.scopes.ActivityScoped
+import javax.inject.Inject
 
-class CharacterAdapter(private var characterClickListener: ((Character)->Unit)) :
-    PagingDataAdapter<Character, CharacterAdapter.MyViewHolder>(CHARACTER_COMPARATOR) {
+@ActivityScoped
+class CharacterAdapter @Inject constructor() :
+    PagingDataAdapter<Character, CharacterAdapter.MyViewHolder>(CharacterComparator) {
+
+    private var characterClickListener: ((Character)->Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val characterBinding = CharacterRowBinding.inflate(
@@ -26,6 +30,10 @@ class CharacterAdapter(private var characterClickListener: ((Character)->Unit)) 
         Log.d(TAG, "onBindViewHolder: $position")
         val character = getItem(position) ?: return
         holder.bind(character)
+    }
+
+    fun setCharacterClickListener(characterClickListener: (Character)->Unit){
+        this.characterClickListener = characterClickListener
     }
 
     // Passing in ViewDataBindng instead of CharacterRowBinding is more generic.
@@ -50,13 +58,5 @@ class CharacterAdapter(private var characterClickListener: ((Character)->Unit)) 
 
     companion object {
         private const val TAG = "CharacterAdapter"
-
-        private val CHARACTER_COMPARATOR = object : DiffUtil.ItemCallback<Character>() {
-            override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean =
-                oldItem.id == newItem.id
-
-            override fun areContentsTheSame(oldItem: Character, newItem: Character): Boolean =
-                oldItem == newItem
-        }
     }
 }

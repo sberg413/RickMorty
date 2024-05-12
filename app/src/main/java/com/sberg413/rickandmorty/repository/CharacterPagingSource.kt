@@ -25,15 +25,10 @@ class CharacterPagingSource(
                 nextKey = if (page == characterList.info.pages) null else page + 1 )
         } catch (e: IOException) {
             // IOException for network failures.
-            LoadResult.Error(e)
+            return LoadResult.Error(e)
         } catch (e: HttpException) {
             // HttpException for any non-2xx HTTP status codes.
-            return if (e.code() == 404){
-                // The API returns 404 for a query with no results ...
-                LoadResult.Page(emptyList(), null, null)
-            } else {
-                LoadResult.Error(e)
-            }
+            return LoadResult.Error(e)
         }
     }
 
