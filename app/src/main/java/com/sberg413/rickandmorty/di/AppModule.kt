@@ -1,5 +1,6 @@
 package com.sberg413.rickandmorty.di
 
+import com.sberg413.rickandmorty.BuildConfig
 import com.sberg413.rickandmorty.api.ApiService
 import com.squareup.moshi.Moshi
 import dagger.Module
@@ -18,9 +19,8 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class AppModule {
 
-    companion object {
-        private const val BASE_URL = "https://rickandmortyapi.com/api/"
-    }
+    @Provides
+    fun provideBaseUrl() = BuildConfig.BASE_URL
 
     @Provides
     @Singleton
@@ -40,7 +40,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi): Retrofit =
+    fun provideRetrofit(okHttpClient: OkHttpClient, moshi: Moshi, BASE_URL: String): Retrofit =
         Retrofit.Builder()
             .baseUrl(BASE_URL)
             .client(okHttpClient)

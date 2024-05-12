@@ -10,14 +10,7 @@ import com.sberg413.rickandmorty.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
-
-data class CharacterDetailUiState(
-    val character: Character? = null,
-    val location: Location? = null
-)
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
@@ -25,35 +18,21 @@ class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CharacterDetailUiState())
-    val uiState: StateFlow<CharacterDetailUiState> = _uiState.asStateFlow()
+    val characterData: StateFlow<Character?> =
+        savedStateHandle.getStateFlow<Character?>(KEY_CHARACTER, null)
 
-    //    private val characterData: StateFlow<Character?> =
+    val locationData: StateFlow<Location?> = characterData.map { character ->
+        if (character == null) return@map null
+        Log.d(TAG, "character = $character")
+        val locationId = character.locationId // location?.url?.replace(Regex(".*/"), "") ?: ""
+        characterRepository.getLocation(locationId)
+    }
+        .flowOn(Dispatchers.IO)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
     companion object {
         private const val TAG = "DetailViewModel"
+
         const val KEY_CHARACTER = "character"
-    }
-
-    init {
-        savedStateHandle.get<Character>(KEY_CHARACTER)?.let {
-            _uiState.update { currentState ->
-                currentState.copy(character = it)
-            }
-            getLocationFromCharacter(it)
-        }
-
-    }
-
-    private fun getLocationFromCharacter(character: Character) {
-        Log.d(TAG, "character = $character")
-        viewModelScope.launch {
-            val locationId = character.locationId // location?.url?.replace(Regex(".*/"), "") ?: ""
-            val location = withContext(Dispatchers.IO) {
-                characterRepository.getLocation(locationId)
-            }
-            _uiState.update { currentState ->
-                currentState.copy(location = location)
-            }
-        }
     }
 }
