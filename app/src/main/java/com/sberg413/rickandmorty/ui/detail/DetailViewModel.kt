@@ -14,10 +14,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-data class CharacterDetailUiState(
-    val character: Character? = null,
-    val location: Location? = null
-)
+sealed class CharacterDetailUiState {
+    object Loading : CharacterDetailUiState()
+    data class Success(val character: Character, val location: Location) : CharacterDetailUiState()
+    data class Error(val message: String) : CharacterDetailUiState()
+}
 
 @HiltViewModel
 class DetailViewModel @Inject constructor(
@@ -25,35 +26,30 @@ class DetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CharacterDetailUiState())
+    private var _uiState: MutableStateFlow<CharacterDetailUiState> = MutableStateFlow(CharacterDetailUiState.Loading)
     val uiState: StateFlow<CharacterDetailUiState> = _uiState.asStateFlow()
 
-    //    private val characterData: StateFlow<Character?> =
     companion object {
         private const val TAG = "DetailViewModel"
         const val KEY_CHARACTER = "character"
     }
 
     init {
-        savedStateHandle.get<Character>(KEY_CHARACTER)?.let {
-            _uiState.update { currentState ->
-                currentState.copy(character = it)
+        viewModelScope.launch {
+            savedStateHandle.get<Character>(KEY_CHARACTER)?.let { character ->
+                // _uiState.value = _uiState.value.copy(character = character)
+                getLocationFromCharacter(character)
             }
-            getLocationFromCharacter(it)
         }
-
     }
 
-    private fun getLocationFromCharacter(character: Character) {
+    private suspend fun getLocationFromCharacter(character: Character) {
         Log.d(TAG, "character = $character")
-        viewModelScope.launch {
-            val locationId = character.locationId // location?.url?.replace(Regex(".*/"), "") ?: ""
-            val location = withContext(Dispatchers.IO) {
-                characterRepository.getLocation(locationId)
-            }
-            _uiState.update { currentState ->
-                currentState.copy(location = location)
-            }
-        }
+        val locationId = character.locationId
+        val location = characterRepository.getLocation(locationId)
+        _uiState.value = CharacterDetailUiState.Success(
+            character = character,
+            location = location
+        )
     }
 }

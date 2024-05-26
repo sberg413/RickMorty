@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -36,9 +37,9 @@ import dagger.hilt.android.internal.managers.ViewComponentManager.FragmentContex
 @Composable
 fun CharacterDetailDescription(viewModel: DetailViewModel, setTitle: (String) -> Unit) {
     val uiState by viewModel.uiState.collectAsState()
-    val character = uiState.character
-    val location = uiState.location
-    if (character != null && location != null) {
+    if (uiState is CharacterDetailUiState.Success) {
+        val character = (uiState as CharacterDetailUiState.Success).character
+        val location = (uiState as CharacterDetailUiState.Success).location
         setTitle( character.name)
         CharacterDetailContent(
             characterData = character,
@@ -64,6 +65,7 @@ private fun CharacterDetailContent(characterData: Character, locationData: Locat
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
                     .padding(top = 18.dp)
+                    .testTag("CharacterName")
             )
 
 
@@ -72,7 +74,7 @@ private fun CharacterDetailContent(characterData: Character, locationData: Locat
             CharacterDetailRow(label = R.string.status, data = characterData.status)
             CharacterDetailRow(label = R.string.species, data = characterData.species)
             CharacterDetailRow(label = R.string.location, data = locationData.name)
-            CharacterDetailRow(label = R.string.dimenson, data = locationData.dimension)
+            CharacterDetailRow(label = R.string.dimension, data = locationData.dimension)
             // CharacterDetailRow(label = "Number of residents", data = locationData.residentCount.toString())
 
         }
@@ -80,9 +82,9 @@ private fun CharacterDetailContent(characterData: Character, locationData: Locat
 }
 
 @Composable
-private fun CharacterDetailRow(@StringRes label: Int, data: String) {
+private fun CharacterDetailRow(modifier: Modifier =  Modifier, @StringRes label: Int, data: String) {
     Row(
-        Modifier
+        modifier = modifier
             .padding(horizontal = 10.dp, vertical = 15.dp)
             .fillMaxWidth()) {
         Text(
@@ -100,7 +102,8 @@ private fun CharacterDetailRow(@StringRes label: Int, data: String) {
         Text(
             text = data,
             modifier = Modifier
-                .weight(1f),
+                .weight(1f)
+                .testTag(stringResource(label)),
             textAlign =  TextAlign.Start
         )
     }

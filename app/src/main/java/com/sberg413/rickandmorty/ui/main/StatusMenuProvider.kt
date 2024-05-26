@@ -1,6 +1,5 @@
 package com.sberg413.rickandmorty.ui.main
 
-import android.content.Context
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
@@ -22,7 +21,7 @@ class StatusMenuProvider(private val mainViewModel: MainViewModel): MenuProvider
         override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
             val filterVal = parent.adapter.getItem(position) as String
             Log.d(TAG," Selected: $filterVal")
-            mainViewModel.setSatusFilter(filterVal)
+            mainViewModel.setStatusFilter(filterVal)
         }
 
         override fun onNothingSelected(parent: AdapterView<*>?) {}

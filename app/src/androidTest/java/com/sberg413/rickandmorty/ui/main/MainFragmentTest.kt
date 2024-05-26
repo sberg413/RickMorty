@@ -1,7 +1,6 @@
 package com.sberg413.rickandmorty.ui.main
 
 import androidx.core.os.bundleOf
-import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sberg413.rickandmorty.launchFragmentInHiltContainer
 import org.junit.Assert.*

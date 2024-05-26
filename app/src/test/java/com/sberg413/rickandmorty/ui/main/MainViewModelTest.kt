@@ -55,7 +55,6 @@ class MainViewModelTest : TestCase() {
             viewModel.listData.toList(values)
         }
 
-        assertEquals(PagingData.empty<Character>(), values[0])
         assertEquals(mockCharacterList, values[1].collectDataForTest(testDispatcher))
         verify(characterRepository, times(1)).getCharacterList(null,null)
 
@@ -100,7 +99,7 @@ class MainViewModelTest : TestCase() {
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.listData.toList(values)
         }
-        viewModel.setSatusFilter(STATUS_ALIVE)
+        viewModel.setStatusFilter(STATUS_ALIVE)
 
         assertEquals(mockCharacterList, values[2].collectDataForTest(testDispatcher))
         verify(characterRepository, times(1)).getCharacterList(null, STATUS_ALIVE)

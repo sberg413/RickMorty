@@ -1,6 +1,7 @@
 package com.sberg413.rickandmorty.ui.main
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -9,7 +10,6 @@ import com.sberg413.rickandmorty.models.*
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -29,11 +29,10 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     val characterClicked: StateFlow<Character?> get() = _characterClicked
     private val _characterClicked = MutableStateFlow<Character?>(null)
 
-    // val characterFilterFlow: StateFlow<CharacterFilter> get() = _characterFilterFlow
-    private val _characterFilterFlow =  MutableStateFlow(CharacterFilter(NoStatusFilter, NoSearchFilter))
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    val _characterFilterFlow =  MutableStateFlow(CharacterFilter(NoStatusFilter, NoSearchFilter))
 
-    @OptIn(FlowPreview::class)
-    val listData: StateFlow<PagingData<Character>> = _characterFilterFlow.mapLatest {
+    val listData: Flow<PagingData<Character>> = _characterFilterFlow.mapLatest {
         Log.d(TAG, "in combine transfer ...")
         characterRepository.getCharacterList(it.searchFilter.search, it.statusFilter.status)
     }
@@ -44,9 +43,7 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
         }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
 
-
-
-    fun setSatusFilter(status: String) {
+    fun setStatusFilter(status: String) {
         viewModelScope.launch {
             _characterFilterFlow.value = _characterFilterFlow.value.let {
                 val value =
