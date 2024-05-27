@@ -18,7 +18,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.sberg413.rickandmorty.CustomTestRunner"
     }
 
     dataBinding {
@@ -127,6 +127,8 @@ dependencies {
     androidTestImplementation(libs.androidx.runner)
     androidTestImplementation(libs.androidx.rules)
     androidTestImplementation(libs.androidx.junit.ktx)
+    androidTestImplementation(libs.hilt.android.testing)
+    kaptAndroidTest(libs.hilt.compiler)
 
     testImplementation(libs.junit)
     testImplementation(libs.androidx.core.testing)
@@ -134,6 +136,10 @@ dependencies {
     testImplementation(libs.mockito.core)
     testImplementation(libs.mockito.inline)
     testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.paging.testing)
+    testImplementation(libs.ui.test.junit4)
+    testImplementation(libs.turbine)
+    debugImplementation(libs.ui.test.manifest)
 
     // Coroutine Test
     androidTestImplementation(libs.kotlinx.coroutines.test)

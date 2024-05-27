@@ -1,8 +1,4 @@
-/*
-* Moved to shared test module (test-common)
-*
 package com.sberg413.rickandmorty.repository
-
 
 import androidx.paging.PagingData
 import com.sberg413.rickandmorty.models.Character
@@ -25,5 +21,3 @@ class TestCharacterRepositoryImpl @Inject constructor(): CharacterRepository {
     }
 
 }
-
- */

@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiService, private val dispatcher: CoroutineDispatcher = Dispatchers.IO) :
@@ -48,10 +49,10 @@ class CharacterRepositoryImpl @Inject constructor(private val apiService: ApiSer
             // .flowOn(dispatcher)
     }
 
-    override suspend fun getLocation(id: String): Location {
+    override suspend fun getLocation(id: String): Location = withContext(Dispatchers.IO){
         // emit(Resource.loading(data = null))
         try {
-           return apiService.getLocation(id)
+            apiService.getLocation(id)
         } catch (exception: Exception){
             Log.e(TAG,"Error retrieving location! ", exception)
             // emit(Resource.error(data=null,message = exception.message?:"Error occured"))
