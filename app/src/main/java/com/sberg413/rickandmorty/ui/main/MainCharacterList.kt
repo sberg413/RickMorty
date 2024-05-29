@@ -9,15 +9,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +33,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.models.Character
+import com.sberg413.rickandmorty.ui.LoadingScreen
 
 
 @Composable
@@ -85,29 +82,6 @@ fun MainCharacterListScreen(viewModel: MainViewModel, modifier: Modifier = Modif
             }
         }
     }
-}
-
-
-@Composable
-fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(
-        modifier =  modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(
-            modifier = modifier
-                .width(122.dp)
-                .wrapContentSize(Alignment.Center),
-            color = MaterialTheme.colorScheme.secondary,
-            trackColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    }
-}
-
-@Preview
-@Composable
-fun LoadingScreenPreview() {
-    LoadingScreen()
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
