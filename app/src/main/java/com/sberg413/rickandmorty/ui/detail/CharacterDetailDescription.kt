@@ -1,5 +1,6 @@
 package com.sberg413.rickandmorty.ui.detail
 
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
@@ -64,13 +65,13 @@ fun CharacterDetailDescription() {
         }
 
         is CharacterDetailUiState.Error -> {
-
+            ShowErrorStateToast((uiState as CharacterDetailUiState.Error).message)
         }
     }
 }
 
 @Composable
-private fun CharacterDetailContent(characterData: Character, locationData: Location) {
+private fun CharacterDetailContent(characterData: Character, locationData: Location?) {
     Surface {
         Column(
             modifier = Modifier
@@ -94,8 +95,10 @@ private fun CharacterDetailContent(characterData: Character, locationData: Locat
             // CharacterDetailRow(label = "Type", data = characterData.type)
             CharacterDetailRow(label = R.string.status, data = characterData.status)
             CharacterDetailRow(label = R.string.species, data = characterData.species)
-            CharacterDetailRow(label = R.string.location, data = locationData.name)
-            CharacterDetailRow(label = R.string.dimension, data = locationData.dimension)
+            locationData?.let { location ->
+                CharacterDetailRow(label = R.string.location, data = location.name)
+                CharacterDetailRow(label = R.string.dimension, data = location.dimension)
+            }
             // CharacterDetailRow(label = "Number of residents", data = locationData.residentCount.toString())
 
         }
@@ -174,5 +177,17 @@ private fun CharacterImage(url: String, name: String) {
                 .align(Alignment.Center),
             loading = placeholder(R.drawable.avatar_placeholder)
         )
+    }
+}
+
+@Composable
+fun ShowErrorStateToast(errMsg: String) {
+    val context = LocalContext.current
+    errMsg?.let {
+        Toast.makeText(
+            context,
+            "ERROR: ${it}",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

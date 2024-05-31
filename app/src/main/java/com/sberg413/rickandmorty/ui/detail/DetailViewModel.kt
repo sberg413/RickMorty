@@ -8,15 +8,15 @@ import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 sealed class CharacterDetailUiState {
     object Loading : CharacterDetailUiState()
-    data class Success(val character: Character, val location: Location) : CharacterDetailUiState()
+    data class Success(val character: Character, val location: Location?) : CharacterDetailUiState()
     data class Error(val message: String) : CharacterDetailUiState()
 }
 
@@ -46,7 +46,7 @@ class DetailViewModel @Inject constructor(
     private suspend fun getLocationFromCharacter(character: Character) {
         Log.d(TAG, "character = $character")
         val locationId = character.locationId
-        val location = characterRepository.getLocation(locationId)
+        val location = locationId?.takeIf { it.isNotEmpty() }?.let { id -> characterRepository.getLocation(id) }
         _uiState.value = CharacterDetailUiState.Success(
             character = character,
             location = location
