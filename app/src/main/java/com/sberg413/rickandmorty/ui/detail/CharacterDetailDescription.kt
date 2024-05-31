@@ -1,6 +1,6 @@
 package com.sberg413.rickandmorty.ui.detail
 
-import androidx.activity.ComponentActivity
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,31 +26,52 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.sberg413.rickandmorty.R
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
-import dagger.hilt.android.internal.managers.ViewComponentManager.FragmentContextWrapper
+import com.sberg413.rickandmorty.ui.LoadingScreen
+import com.sberg413.rickandmorty.utils.findActivity
 
 
 @Composable
-fun CharacterDetailDescription(viewModel: DetailViewModel, setTitle: (String) -> Unit) {
+fun CharacterDetailDescription() {
+
+    val viewModel: DetailViewModel = viewModel()
     val uiState by viewModel.uiState.collectAsState()
-    if (uiState is CharacterDetailUiState.Success) {
-        val character = (uiState as CharacterDetailUiState.Success).character
-        val location = (uiState as CharacterDetailUiState.Success).location
-        setTitle( character.name)
-        CharacterDetailContent(
-            characterData = character,
-            locationData = location
-        )
+
+    when (uiState) {
+        is CharacterDetailUiState.Loading -> {
+            LoadingScreen()
+
+        }
+
+        is CharacterDetailUiState.Success -> {
+            val character = (uiState as CharacterDetailUiState.Success).character
+            val location = (uiState as CharacterDetailUiState.Success).location
+
+            val context = LocalContext.current.findActivity()
+            LaunchedEffect(Unit) {
+                (context as? AppCompatActivity)?.supportActionBar?.title = character.name
+            }
+
+            CharacterDetailContent(
+                characterData = character,
+                locationData = location
+            )
+        }
+
+        is CharacterDetailUiState.Error -> {
+            ShowErrorStateToast((uiState as CharacterDetailUiState.Error).message)
+        }
     }
 }
 
 @Composable
-private fun CharacterDetailContent(characterData: Character, locationData: Location) {
+private fun CharacterDetailContent(characterData: Character, locationData: Location?) {
     Surface {
         Column(
             modifier = Modifier
@@ -73,8 +95,10 @@ private fun CharacterDetailContent(characterData: Character, locationData: Locat
             // CharacterDetailRow(label = "Type", data = characterData.type)
             CharacterDetailRow(label = R.string.status, data = characterData.status)
             CharacterDetailRow(label = R.string.species, data = characterData.species)
-            CharacterDetailRow(label = R.string.location, data = locationData.name)
-            CharacterDetailRow(label = R.string.dimension, data = locationData.dimension)
+            locationData?.let { location ->
+                CharacterDetailRow(label = R.string.location, data = location.name)
+                CharacterDetailRow(label = R.string.dimension, data = location.dimension)
+            }
             // CharacterDetailRow(label = "Number of residents", data = locationData.residentCount.toString())
 
         }
@@ -153,5 +177,17 @@ private fun CharacterImage(url: String, name: String) {
                 .align(Alignment.Center),
             loading = placeholder(R.drawable.avatar_placeholder)
         )
+    }
+}
+
+@Composable
+fun ShowErrorStateToast(errMsg: String) {
+    val context = LocalContext.current
+    errMsg?.let {
+        Toast.makeText(
+            context,
+            "ERROR: ${it}",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 }

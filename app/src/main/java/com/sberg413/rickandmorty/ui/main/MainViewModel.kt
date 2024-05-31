@@ -6,11 +6,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.sberg413.rickandmorty.models.*
+import com.sberg413.rickandmorty.models.Character
+import com.sberg413.rickandmorty.models.CharacterFilter
+import com.sberg413.rickandmorty.models.NoSearchFilter
+import com.sberg413.rickandmorty.models.NoStatusFilter
+import com.sberg413.rickandmorty.models.SearchFilter
+import com.sberg413.rickandmorty.models.StatusFilter
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,38 +43,30 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
     val _characterFilterFlow =  MutableStateFlow(CharacterFilter(NoStatusFilter, NoSearchFilter))
 
-    val listData: Flow<PagingData<Character>> = _characterFilterFlow.mapLatest {
-        Log.d(TAG, "in combine transfer ...")
-        characterRepository.getCharacterList(it.searchFilter.search, it.statusFilter.status)
-    }
-        .flattenMerge()
-        .cachedIn(viewModelScope)
-        .catch {
-            Log.e(TAG, "updateCharacterList: a network error occurred!")
+    val listData: Flow<PagingData<Character>> = _characterFilterFlow
+        .flatMapLatest {
+            Log.d(TAG, "Fetching character list with filter: $it")
+            characterRepository.getCharacterList(it.searchFilter.search, it.statusFilter.status)
+                .catch { e ->
+                    Log.e(TAG, "Error fetching character list,", e)
+                }
         }
+        .cachedIn(viewModelScope)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PagingData.empty())
 
     fun setStatusFilter(status: String) {
         viewModelScope.launch {
-            _characterFilterFlow.value = _characterFilterFlow.value.let {
-                val value =
-                    if (status.endsWith("all", true))
-                        NoStatusFilter
-                    else StatusFilter(status)
-                CharacterFilter(value, it.searchFilter)
-            }
+            val value = if (status.endsWith("all", true))
+                NoStatusFilter else StatusFilter(status)
+            _characterFilterFlow.value = _characterFilterFlow.value.copy(statusFilter = value)
         }
     }
 
     fun setSearchFilter(search: String?) {
         viewModelScope.launch {
-            _characterFilterFlow.value = _characterFilterFlow.value.let {
-                val value =
-                    if (search.isNullOrBlank())
-                        NoSearchFilter
-                    else SearchFilter(search)
-                CharacterFilter(it.statusFilter, value)
-            }
+            val value = if (search.isNullOrBlank())
+                NoSearchFilter else SearchFilter(search)
+            _characterFilterFlow.value = _characterFilterFlow.value.copy(searchFilter = value)
         }
     }
 

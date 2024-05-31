@@ -2,20 +2,33 @@ package com.sberg413.rickandmorty.ui.main
 
 import androidx.paging.PagingData
 import com.sberg413.rickandmorty.MainCoroutineRule
+import com.sberg413.rickandmorty.TestData
 import com.sberg413.rickandmorty.models.Character
+import com.sberg413.rickandmorty.models.CharacterFilter
+import com.sberg413.rickandmorty.models.NoSearchFilter
+import com.sberg413.rickandmorty.models.NoStatusFilter
+import com.sberg413.rickandmorty.models.SearchFilter
+import com.sberg413.rickandmorty.models.StatusFilter
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.util.collectDataForTest
 import junit.framework.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.test.*
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.any
+import org.mockito.Mockito.times
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
 
@@ -31,31 +44,53 @@ class MainViewModelTest : TestCase() {
     @Mock
     lateinit var characterRepository: CharacterRepository
 
-    @Mock
-    lateinit var mockCharacter: Character
+
+    val characterList = listOf(TestData.TEST_CHARACTER, TestData.TEST_CHARACTER_2)
+    val pagingData = PagingData.from(characterList)
+
+    lateinit var viewModel: MainViewModel
 
     @Before
     fun before() {
         MockitoAnnotations.openMocks(this)
+
+        val dataResponse = flow { emit(pagingData) }
+        `when`(characterRepository.getCharacterList(any(), any())).thenReturn(
+            dataResponse
+        )
+
+        viewModel = MainViewModel(characterRepository)
+    }
+
+    @Test
+    fun `setStatusFilter updates filter correctly`() = runTest {
+        val expectedFilter = CharacterFilter(StatusFilter("Alive"), NoSearchFilter)
+
+        viewModel.setStatusFilter("Alive")
+        advanceUntilIdle()
+
+        Assert.assertEquals(expectedFilter, viewModel._characterFilterFlow.value)
+    }
+
+    @Test
+    fun `setSearchFilter updates filter correctly`() = runTest {
+        val expectedFilter = CharacterFilter(NoStatusFilter, SearchFilter("Rick"))
+
+        viewModel.setSearchFilter("Rick")
+        advanceUntilIdle()
+
+        Assert.assertEquals(expectedFilter, viewModel._characterFilterFlow.value)
     }
 
     @Test
     fun listDataInitialResponse() = runTest {
 
-        val mockCharacterList = listOf(mockCharacter)
-        val mockPagingData = PagingData.from(mockCharacterList)
-        val dataResponse = flow { emit(mockPagingData) }
-        `when`(characterRepository.getCharacterList(any(), any())).thenReturn(
-            dataResponse
-        )
-
-        val viewModel = MainViewModel(characterRepository)
         val values = mutableListOf<PagingData<Character>>()
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.listData.toList(values)
         }
 
-        assertEquals(mockCharacterList, values[1].collectDataForTest(testDispatcher))
+        assertEquals(characterList, values[1].collectDataForTest(testDispatcher))
         verify(characterRepository, times(1)).getCharacterList(null,null)
 
         collectJob.cancel()
@@ -64,21 +99,13 @@ class MainViewModelTest : TestCase() {
     @Test
     fun listDataAfterSetSearchFilter() = runTest {
 
-        val mockCharacterList = listOf(mockCharacter)
-        val mockPagingData = PagingData.from(mockCharacterList)
-        val dataResponse = flow { emit(mockPagingData) }
-        `when`(characterRepository.getCharacterList(any(), any())).thenReturn(
-            dataResponse
-        )
-
-        val viewModel = MainViewModel(characterRepository)
         val values = mutableListOf<PagingData<Character>>()
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.listData.toList(values)
         }
         viewModel.setSearchFilter(SEARCH_MORTY)
 
-        assertEquals(mockCharacterList, values[2].collectDataForTest(testDispatcher))
+        assertEquals(characterList, values[2].collectDataForTest(testDispatcher))
         verify(characterRepository, times(1)).getCharacterList(SEARCH_MORTY,null)
 
         collectJob.cancel()
@@ -87,21 +114,13 @@ class MainViewModelTest : TestCase() {
     @Test
     fun listDataAfterSetStatusFilter() = runTest {
 
-        val mockCharacterList = listOf(mockCharacter)
-        val mockPagingData = PagingData.from(mockCharacterList)
-        val dataResponse = flow { emit(mockPagingData) }
-        `when`(characterRepository.getCharacterList(any(), any())).thenReturn(
-            dataResponse
-        )
-
-        val viewModel = MainViewModel(characterRepository)
         val values = mutableListOf<PagingData<Character>>()
         val collectJob = launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.listData.toList(values)
         }
         viewModel.setStatusFilter(STATUS_ALIVE)
 
-        assertEquals(mockCharacterList, values[2].collectDataForTest(testDispatcher))
+        assertEquals(characterList, values[2].collectDataForTest(testDispatcher))
         verify(characterRepository, times(1)).getCharacterList(null, STATUS_ALIVE)
 
         collectJob.cancel()

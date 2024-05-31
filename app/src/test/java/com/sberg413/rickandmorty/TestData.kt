@@ -17,6 +17,18 @@ object TestData {
         "Beth Smith"
     )
 
+    val TEST_CHARACTER_2 = Character(
+        2,
+        "Alive",
+        "Human",
+        "",
+        "Male",
+        "20",
+        "20",
+        "https://rickandmortyapi.com/api/character/avatar/2.jpeg",
+        "Morty Smith"
+    )
+
     val TEST_LOCATION = Location(
         id = 20,
         name = "Earth (Replacement Dimension)",
