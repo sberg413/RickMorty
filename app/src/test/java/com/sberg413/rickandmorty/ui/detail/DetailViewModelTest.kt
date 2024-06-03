@@ -86,7 +86,7 @@ class DetailViewModelTest {
         // Given
         val location = TestData.TEST_LOCATION
         val character = savedStateHandle.get<Character>(DetailViewModel.KEY_CHARACTER)!!
-        `when`(characterRepository.getLocation(character.locationId)).thenReturn(location)
+        `when`(characterRepository.getLocation(character.locationId!!)).thenReturn(location)
 
         // When
         viewModel = DetailViewModel(characterRepository, savedStateHandle)

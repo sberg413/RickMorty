@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +7,7 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.navigation.safeargs)
+    jacoco
 }
 
 android {
@@ -26,7 +28,13 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
+        debug {
+            applicationIdSuffix = ".debug"
+            isMinifyEnabled = false
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage= true
+        }
+        release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
@@ -62,7 +70,10 @@ android {
     }
 
     testOptions {
-        unitTests.apply {
+       //  execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        animationsDisabled = true
+
+        unitTests {
             isReturnDefaultValues = true
             isIncludeAndroidResources = true
         }
@@ -150,4 +161,57 @@ kapt {
     correctErrorTypes = true
 }
 
+jacoco {
+    toolVersion = "0.8.11"
+}
 
+
+tasks {
+    val jacocoTestReport by creating(JacocoReport::class) {
+        dependsOn("testDebugUnitTest")
+
+        reports {
+            csv.required.set(true)
+            xml.required.set(true)
+            html.required.set(true)
+            html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+        }
+
+        // Specify the directories and files to include in the coverage report
+        val includedFiles = listOf(
+            "**/com/sberg413/rickandmorty/**",  // Replace with your actual package name
+            "**/R.class",
+            "**/R$*.class",
+            "**/BuildConfig.*",
+            "**/Manifest*.*",
+            "**/*Test*.*",
+            "android/**/*.*",
+            "**/kapt*/stubs/**",
+        )
+
+        val excludeFiles = listOf(
+            "**/com/sberg413/rickandmorty/di/**",
+        )
+
+        // Java class files
+        val debugTree = fileTree("${layout.buildDirectory}/intermediates/classes/debug") {
+            include(includedFiles)
+            exclude(excludeFiles)
+        }
+
+        // Kotlin class files
+        val kotlinDebugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
+            include(includedFiles)
+        }
+
+        // Source directories
+        val mainSrc = "${project.projectDir}/src/main/java"
+
+        sourceDirectories.setFrom(files(listOf(mainSrc)))
+        classDirectories.setFrom(files(listOf(debugTree, kotlinDebugTree)))
+        executionData.setFrom(files(
+            "${layout.buildDirectory}/jacoco/testDebugUnitTest.exec",
+            "${layout.buildDirectory}/outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+            "${layout.buildDirectory}/outputs/code_coverage/debugAndroidTest/connected/**/coverage.ec"))
+    }
+}
