@@ -1,17 +1,17 @@
 package com.sberg413.rickandmorty.api.dto
 
-class CharacterListApi(
+data class CharacterListApi(
     val info: Info,
     val results: List<Result>
 ) {
-    class Info(
+    data class Info(
         val count: Int,
         val next: String?,
         val pages: Int,
         val prev: String?
     )
 
-    class Result(
+    data class Result(
         val created: String,
         val episode: List<String>,
         val gender: String,
@@ -25,12 +25,12 @@ class CharacterListApi(
         val type: String,
         val url: String
     ) {
-        class Origin(
+        data class Origin(
             val name: String,
             val url: String
         )
 
-        class Location(
+        data class Location(
             val name: String,
             val url: String
         )
