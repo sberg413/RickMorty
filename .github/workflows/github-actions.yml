@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: set up JDK 11
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'zulu'
@@ -24,15 +24,6 @@ jobs:
 
       - name: Gradle Wrapper Validation
         uses: gradle/actions/wrapper-validation@v3
-
-      - name: Setup Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches/
-            ~/.gradle/wrapper/
-          key: cache-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: cache-gradle-
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
