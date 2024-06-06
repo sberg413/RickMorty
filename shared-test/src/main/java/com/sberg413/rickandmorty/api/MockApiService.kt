@@ -4,7 +4,7 @@ import com.sberg413.rickandmorty.api.dto.CharacterListApi
 import com.sberg413.rickandmorty.models.Location
 import kotlin.math.ceil
 
-class MockApiService(): ApiService {
+class MockApiService : ApiService {
 
     companion object {
         private const val ITEMS_PER_PAGE = 2

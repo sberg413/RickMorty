@@ -58,10 +58,7 @@ fun CharacterDetailDescription() {
                 (context as? AppCompatActivity)?.supportActionBar?.title = character.name
             }
 
-            CharacterDetailContent(
-                characterData = character,
-                locationData = location
-            )
+
         }
 
         is CharacterDetailUiState.Error -> {
@@ -71,7 +68,7 @@ fun CharacterDetailDescription() {
 }
 
 @Composable
-private fun CharacterDetailContent(characterData: Character, locationData: Location?) {
+fun CharacterDetailContent(characterData: Character, locationData: Location?) {
     Surface {
         Column(
             modifier = Modifier

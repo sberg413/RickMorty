@@ -5,7 +5,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sberg413.rickandmorty.launchFragmentInHiltContainer
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import org.junit.Assert.*
 
 import junit.framework.TestCase
 
@@ -34,7 +33,8 @@ class MainFragmentTest : TestCase() {
     fun testMainFragment() {
         // The "fragmentArgs" argument is optional.
         val fragmentArgs = bundleOf()
-        val scenario = launchFragmentInHiltContainer<MainFragment>(fragmentArgs)
+        val scenario =
+            launchFragmentInHiltContainer<MainFragment>(fragmentArgs)
     }
 
 }
