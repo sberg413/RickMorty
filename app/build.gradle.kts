@@ -106,7 +106,6 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.glide.compose)
     implementation(libs.androidx.legacy.support.v4)
-    implementation(libs.androidx.ui.test.junit4.android)
     ksp(libs.glide.compiler)
 
     implementation(libs.hilt.android)
@@ -126,7 +125,8 @@ dependencies {
     androidTestImplementation(composeBom)
     androidTestImplementation(libs.androidx.ui.test.junit4)
 
-    testImplementation(libs.androidx.ui.test.junit4.android)
+    testImplementation(composeBom)
+    testImplementation(libs.androidx.ui.test.junit4)
 
     /* The following should actually be added to the debugImplementation since it
      * will place ui-test-manifest in the build. Including it in implementation allows for
@@ -154,7 +154,6 @@ dependencies {
     testImplementation(libs.mockito.inline)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.paging.testing)
-    // testImplementation(libs.ui.test.junit4)
     testImplementation(libs.turbine)
     testImplementation(libs.kotlinx.coroutines.test)
 }
