@@ -1,3 +1,4 @@
+include(":shared-test")
 
 pluginManagement {
     repositories {

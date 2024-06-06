@@ -7,16 +7,13 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.sberg413.rickandmorty.di.RepositoryModule
 import com.sberg413.rickandmorty.launchFragmentInHiltContainer
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
 import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.repository.TestCharacterRepositoryImpl
-import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
-import dagger.hilt.android.testing.UninstallModules
 import junit.framework.TestCase
 import kotlinx.coroutines.test.runTest
 import org.junit.After
