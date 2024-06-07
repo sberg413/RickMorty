@@ -1,6 +1,8 @@
 # Rick & Morty Sample App
 This application is a sample app that uses [The Rick and Morty API](https://rickandmortyapi.com/) to display of list of characters. Click on a character from the list opens a more detailed view of the character.
 
+![Build Status](https://github.com/sberg413/RickMorty/actions/workflows/ci.yml/github-actions.svg)
+
 This implementation shows off several best practices, libraries, and concepts. Among these are:
 * MVVM Architecture
 * Jetpack Compose
