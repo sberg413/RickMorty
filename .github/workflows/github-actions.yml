@@ -32,7 +32,7 @@ jobs:
         run: ./gradlew build
 
       - name: Run Unit Tests
-        run: ./gradlew test
+        run: ./gradlew testDebugUnitTest
 
       - name: Run Jacoco Report
         run: ./gradlew jacocoTestReport
@@ -41,3 +41,5 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./test-results/testDebugUnitTest/
+          # files: ./test-results/testDebugUnitTest/TEST-*.xml # optional

@@ -168,14 +168,15 @@ jacoco {
 
 
 tasks {
+
     val jacocoTestReport by creating(JacocoReport::class) {
         dependsOn("testDebugUnitTest")
 
         reports {
-            csv.required.set(true)
             xml.required.set(true)
             html.required.set(true)
-            html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+            csv.required.set(false)
+            // html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
         }
 
         // Specify the directories and files to include in the coverage report
@@ -210,9 +211,9 @@ tasks {
 
         sourceDirectories.setFrom(files(listOf(mainSrc)))
         classDirectories.setFrom(files(listOf(debugTree, kotlinDebugTree)))
-        executionData.setFrom(files(
-            "${layout.buildDirectory}/jacoco/testDebugUnitTest.exec",
-            "${layout.buildDirectory}/outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-            "${layout.buildDirectory}/outputs/code_coverage/debugAndroidTest/connected/**/coverage.ec"))
+//        executionData.setFrom(files(
+//            "${layout.buildDirectory}/jacoco/testDebugUnitTest.exec",
+//            "${layout.buildDirectory}/outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+//            "${layout.buildDirectory}/outputs/code_coverage/debugAndroidTest/connected/**/coverage.ec"))
     }
 }
