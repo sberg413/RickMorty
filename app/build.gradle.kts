@@ -29,10 +29,10 @@ android {
 
     buildTypes {
         debug {
-            applicationIdSuffix = ".debug"
+            // applicationIdSuffix = ".debug"
             isMinifyEnabled = false
-            enableUnitTestCoverage = true
-            enableAndroidTestCoverage= true
+            // enableUnitTestCoverage = true
+            // enableAndroidTestCoverage= true
         }
         release {
             isMinifyEnabled = false
@@ -58,21 +58,9 @@ android {
         freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
 
-    sourceSets {
-//        val commonTestDir = "src/test-common/java"
-//        val commonTestResourcesDir = "src/test-common/resources"
-
-//        getByName("androidTest").java.srcDirs("src/androidTest/java", commonTestDir)
-//        getByName("test").java.srcDirs("src/test/java", commonTestDir)
-
-//        getByName("androidTest").resources.srcDirs("src/androidTest/resources", commonTestResourcesDir)
-//        getByName("test").resources.srcDirs("src/test/resources", commonTestResourcesDir)
-    }
-
     testOptions {
-       //  execution = "ANDROIDX_TEST_ORCHESTRATOR"
-        animationsDisabled = true
-
+        // execution = "ANDROIDX_TEST_ORCHESTRATOR"
+        // animationsDisabled = true
         unitTests {
             isReturnDefaultValues = true
             isIncludeAndroidResources = true
@@ -163,56 +151,43 @@ kapt {
 }
 
 jacoco {
-    toolVersion = "0.8.11"
+    toolVersion = "0.8.8"
+    // reportsDirectory.set(layout.buildDirectory.dir("reports/jacoco"))
 }
 
 
-tasks {
-    val jacocoTestReport by creating(JacocoReport::class) {
-        dependsOn("testDebugUnitTest")
+tasks.register<JacocoReport>("jacocoTestReport") {
+    dependsOn("testDebugUnitTest")
 
-        reports {
-            csv.required.set(true)
-            xml.required.set(true)
-            html.required.set(true)
-            html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
-        }
-
-        // Specify the directories and files to include in the coverage report
-        val includedFiles = listOf(
-            "**/com/sberg413/rickandmorty/**",  // Replace with your actual package name
-            "**/R.class",
-            "**/R$*.class",
-            "**/BuildConfig.*",
-            "**/Manifest*.*",
-            "**/*Test*.*",
-            "android/**/*.*",
-            "**/kapt*/stubs/**",
-        )
-
-        val excludeFiles = listOf(
-            "**/com/sberg413/rickandmorty/di/**",
-        )
-
-        // Java class files
-        val debugTree = fileTree("${layout.buildDirectory}/intermediates/classes/debug") {
-            include(includedFiles)
-            exclude(excludeFiles)
-        }
-
-        // Kotlin class files
-        val kotlinDebugTree = fileTree("${layout.buildDirectory}/tmp/kotlin-classes/debug") {
-            include(includedFiles)
-        }
-
-        // Source directories
-        val mainSrc = "${project.projectDir}/src/main/java"
-
-        sourceDirectories.setFrom(files(listOf(mainSrc)))
-        classDirectories.setFrom(files(listOf(debugTree, kotlinDebugTree)))
-        executionData.setFrom(files(
-            "${layout.buildDirectory}/jacoco/testDebugUnitTest.exec",
-            "${layout.buildDirectory}/outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
-            "${layout.buildDirectory}/outputs/code_coverage/debugAndroidTest/connected/**/coverage.ec"))
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+        csv.required.set(false)
     }
+
+    val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
+        "**/*Test*.*", "android/**/*.*")
+
+    val kotlinTree = fileTree("$buildDir/tmp/kotlin-classes/debug") {
+        exclude(fileFilter)
+    }
+    val javacTree = fileTree("$buildDir/intermediates/javac/debug") {
+        exclude(fileFilter)
+    }
+    val mainSrc = "${project.projectDir}/src/main/java"
+
+    sourceDirectories.setFrom(mainSrc)
+    classDirectories.setFrom(kotlinTree, javacTree)
+    executionData.setFrom(files(
+        "$buildDir/jacoco/testDebugUnitTest.exec")
+    )
+
+    // For multi-module projects, you may need to include additional modules:
+    // subprojects {
+    //     tasks.withType<JacocoReport> {
+    //         additionalSourceDirs.setFrom(files("$projectDir/src/main/java"))
+    //         additionalClassDirs.setFrom(files("$buildDir/intermediates/classes/debug"))
+    //         additionalExecutionData.setFrom(files("$buildDir/jacoco/testDebugUnitTest.exec"))
+    //     }
+    // }
 }

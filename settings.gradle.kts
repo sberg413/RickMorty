@@ -1,5 +1,3 @@
-include(":shared-test")
-
 pluginManagement {
     repositories {
         google {
@@ -22,3 +20,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Rick & Morty"
 include(":app")
+include(":shared-test")
