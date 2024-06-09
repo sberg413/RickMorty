@@ -28,6 +28,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      - name: Run Lint Check
+        run: ./gradlew lint
+        continue-on-error: false
+
       - name: Build with Gradle
         run: ./gradlew build
 
@@ -41,5 +45,5 @@ jobs:
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./test-results/testDebugUnitTest/
+          # directory: ./test-results/testDebugUnitTest/
           # files: ./test-results/testDebugUnitTest/TEST-*.xml # optional
