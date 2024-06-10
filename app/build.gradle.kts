@@ -60,7 +60,7 @@ android {
 
     testOptions {
         // execution = "ANDROIDX_TEST_ORCHESTRATOR"
-        // animationsDisabled = true
+        animationsDisabled = true
         unitTests {
             isReturnDefaultValues = true
             isIncludeAndroidResources = true
