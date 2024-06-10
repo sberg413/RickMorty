@@ -1,13 +1,10 @@
-/*
-* Moved to shared test module (test-common)
-*
 package com.sberg413.rickandmorty.repository
-
 
 import androidx.paging.PagingData
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,8 +13,9 @@ class TestCharacterRepositoryImpl @Inject constructor(): CharacterRepository {
 
     var location: Location? = null
 
-    override fun getCharacterList(search: String?, status: String?): Flow<PagingData<Character>> {
-        TODO("Not yet implemented")
+
+    override fun getCharacterList(search: String?, status: String?): Flow<PagingData<Character>> = flow {
+        emit(PagingData.empty())
     }
 
     override suspend fun getLocation(id: String): Location {
@@ -25,5 +23,3 @@ class TestCharacterRepositoryImpl @Inject constructor(): CharacterRepository {
     }
 
 }
-
- */

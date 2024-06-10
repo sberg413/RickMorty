@@ -58,7 +58,10 @@ fun CharacterDetailDescription() {
                 (context as? AppCompatActivity)?.supportActionBar?.title = character.name
             }
 
-
+            CharacterDetailContent(
+                characterData = character,
+                locationData = location
+            )
         }
 
         is CharacterDetailUiState.Error -> {
