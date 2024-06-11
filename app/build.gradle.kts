@@ -184,7 +184,10 @@ tasks.register<JacocoReport>("jacocoTestReport") {
 //        include(listOf("**/*Activity.class" + "**/*Fragment.class" + "**/*Application.class"))
 //    }
 
-    val mainSrc = "${project.projectDir}/src/main/java"
+    val mainSrc = fileTree("${project.projectDir}/src/main/java"){
+        // Exclude Hilt Module files
+        exclude(listOf("**/di/*Module.kt"))
+    }
     val hiltSrc =  fileTree("$buildDir/generated/source/kapt/debug") {
         include(listOf("**/Hilt_*.java"))
     }
