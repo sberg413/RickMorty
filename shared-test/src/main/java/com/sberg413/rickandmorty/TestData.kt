@@ -2,6 +2,8 @@ package com.sberg413.rickandmorty
 
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.Location
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 object TestData {
 
@@ -38,4 +40,12 @@ object TestData {
         url = "https://rickandmortyapi.com/api/location/20",
         created = "2017-11-18T19:33:01.173Z"
     )
+
+    fun readJsonFile(filename: String): String {
+        return javaClass.classLoader!!.getResourceAsStream(filename)?.use { inputStream ->
+            inputStream.bufferedReader().use { reader ->
+                reader.readText()
+            }
+        } ?: ""
+    }
 }
