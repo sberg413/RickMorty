@@ -32,7 +32,7 @@ android {
             // applicationIdSuffix = ".debug"
             isMinifyEnabled = false
             // enableUnitTestCoverage = true
-            // enableAndroidTestCoverage= true
+            enableAndroidTestCoverage= true
         }
         release {
             isMinifyEnabled = false
@@ -165,22 +165,38 @@ tasks.register<JacocoReport>("jacocoTestReport") {
         csv.required.set(false)
     }
 
-    val fileFilter = listOf("**/R.class", "**/R$*.class", "**/BuildConfig.*", "**/Manifest*.*",
-        "**/*Test*.*", "android/**/*.*")
+    val fileFilter = listOf(
+        "**/R.class",
+        "**/R$*.class",
+        "**/BuildConfig.*",
+        "**/Manifest*.*",
+        "**/*Test*.*",
+        "android/**/*.*"
+    )
 
     val kotlinTree = fileTree("$buildDir/tmp/kotlin-classes/debug") {
-        exclude(fileFilter)
+        exclude(fileFilter + "**/*Activity.class" + "**/*Fragment.class" + "**/*Application.class")
     }
     val javacTree = fileTree("$buildDir/intermediates/javac/debug") {
         exclude(fileFilter)
     }
-    val mainSrc = "${project.projectDir}/src/main/java"
+//    val hiltTree = fileTree("$buildDir/intermediates/classes/debug/transformDebugClassesWithAsm") {
+//        include(listOf("**/*Activity.class" + "**/*Fragment.class" + "**/*Application.class"))
+//    }
 
-    sourceDirectories.setFrom(mainSrc)
+    val mainSrc = "${project.projectDir}/src/main/java"
+    val hiltSrc =  fileTree("$buildDir/generated/source/kapt/debug") {
+        include(listOf("**/Hilt_*.java"))
+    }
+
+    sourceDirectories.setFrom(mainSrc, hiltSrc)
     classDirectories.setFrom(kotlinTree, javacTree)
-    executionData.setFrom(files(
-        "$buildDir/jacoco/testDebugUnitTest.exec")
+    executionData.setFrom(
+        fileTree(layout.buildDirectory) {
+            include(listOf("**/*.exec", "**/*.ec"))
+        }
     )
+
 
     // For multi-module projects, you may need to include additional modules:
     // subprojects {
