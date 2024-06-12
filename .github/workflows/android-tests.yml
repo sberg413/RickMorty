@@ -49,6 +49,19 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+      - name: Set up emulator
+        run: |
+          echo "Installing emulator"
+          sudo $ANDROID_SDK_ROOT/tools/bin/sdkmanager --install "system-images;android-${{ matrix.api-level }};google_apis;x86_64"
+          echo "Creating AVD"
+          echo no | sudo $ANDROID_SDK_ROOT/tools/bin/avdmanager create avd -n test -k "system-images;android-${{ matrix.api-level }};google_apis;x86_64" --force
+          sudo $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -no-audio -no-snapshot -netdelay none -netspeed full &
+          sudo $ANDROID_SDK_ROOT/platform-tools/adb wait-for-device
+          sudo $ANDROID_SDK_ROOT/platform-tools/adb shell settings put global window_animation_scale 0 &
+          sudo $ANDROID_SDK_ROOT/platform-tools/adb shell settings put global transition_animation_scale 0 &
+          sudo $ANDROID_SDK_ROOT/platform-tools/adb shell settings put global animator_duration_scale 0 &
+          sleep 60  
+
       - name: Run instrumentation tests
         run: ./gradlew connectedAndroidTest
 
