@@ -180,20 +180,20 @@ tasks.register<JacocoReport>("jacocoTestReport") {
     val javacTree = fileTree("$buildDir/intermediates/javac/debug") {
         exclude(fileFilter)
     }
-//    val hiltTree = fileTree("$buildDir/intermediates/classes/debug/transformDebugClassesWithAsm") {
-//        include(listOf("**/*Activity.class" + "**/*Fragment.class" + "**/*Application.class"))
-//    }
+    val hiltTree = fileTree("$buildDir/intermediates/classes/debug/transformDebugClassesWithAsm/dirs/") {
+        include("**/Hilt_*.class")
+    }
 
     val mainSrc = fileTree("${project.projectDir}/src/main/java"){
         // Exclude Hilt Module files
-        exclude(listOf("**/di/*Module.kt"))
+        exclude(listOf("**/di/*.kt"))
     }
-    val hiltSrc =  fileTree("$buildDir/generated/source/kapt/debug") {
-        include(listOf("**/Hilt_*.java"))
-    }
+//    val hiltSrc =  fileTree("$buildDir/generated/source/kapt/debug") {
+//        include(listOf("**/Hilt_*.java"))
+//    }
 
-    sourceDirectories.setFrom(mainSrc, hiltSrc)
-    classDirectories.setFrom(kotlinTree, javacTree)
+    sourceDirectories.setFrom(mainSrc)
+    classDirectories.setFrom(kotlinTree, javacTree, hiltTree)
     executionData.setFrom(
         fileTree(layout.buildDirectory) {
             include(listOf("**/*.exec", "**/*.ec"))

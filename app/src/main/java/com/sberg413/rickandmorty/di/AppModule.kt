@@ -1,6 +1,7 @@
 package com.sberg413.rickandmorty.di
 
 import com.sberg413.rickandmorty.api.ApiService
+import com.sberg413.rickandmorty.utils.ExcludeFromJacocoGeneratedReport
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -14,6 +15,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
+@ExcludeFromJacocoGeneratedReport
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
