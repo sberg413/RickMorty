@@ -6,14 +6,14 @@ jobs:
   instrumentation-tests:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        api-level: [32] # You can specify the API levels you want to test against
-        target: [default] # [default, google_apis, google_apis_playstore]
-
-    env:
-      JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
-      ANDROID_SDK_ROOT: /opt/android-sdk
+#    strategy:
+#      matrix:
+#        api-level: [32] # You can specify the API levels you want to test against
+#        target: [default] # [default, google_apis, google_apis_playstore]
+#
+#    env:
+#      JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64
+#      ANDROID_SDK_ROOT: /opt/android-sdk
 
     steps:
       - name: Checkout the Code
@@ -26,44 +26,23 @@ jobs:
           distribution: 'zulu'
           cache: gradle
 
-      - name: Download and set up Android SDK
-        uses: android-actions/setup-android@v2
-        with:
-          api-level: ${{ matrix.api-level }}
-          target: ${{ matrix.target }}
-          channel: 'stable'
-
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build with Gradle
-        run: ./gradlew build
+      - name: run tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 29
+          script: ./gradlew connectedCheck
 
-      - name: Set up emulator
-        run: |
-          echo "Installing emulator"
-          sudo $ANDROID_SDK_ROOT/tools/bin/sdkmanager --install "system-images;android-${{ matrix.api-level }};google_apis;x86_64"
-          echo "Creating AVD"
-          echo no | sudo $ANDROID_SDK_ROOT/tools/bin/avdmanager create avd -n test -k "system-images;android-${{ matrix.api-level }};google_apis;x86_64" --force
-          sudo $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -no-audio -no-snapshot -netdelay none -netspeed full &
-          sudo $ANDROID_SDK_ROOT/platform-tools/adb wait-for-device
-          sudo $ANDROID_SDK_ROOT/platform-tools/adb shell settings put global window_animation_scale 0 &
-          sudo $ANDROID_SDK_ROOT/platform-tools/adb shell settings put global transition_animation_scale 0 &
-          sudo $ANDROID_SDK_ROOT/platform-tools/adb shell settings put global animator_duration_scale 0 &
-          sleep 60  
-
-      - name: Run instrumentation tests
-        run: ./gradlew connectedAndroidTest
+#      - name: Run instrumentation tests
+#        run: ./gradlew connectedAndroidTest
 
       - name: Run Jacoco Report
         run: ./gradlew jacocoTestReport
