@@ -1,8 +1,10 @@
 package com.sberg413.rickandmorty.ui.main
 
 import androidx.paging.PagingData
+import app.cash.turbine.test
 import com.sberg413.rickandmorty.MainCoroutineRule
 import com.sberg413.rickandmorty.TestData
+import com.sberg413.rickandmorty.TestData.TEST_CHARACTER
 import com.sberg413.rickandmorty.models.Character
 import com.sberg413.rickandmorty.models.CharacterFilter
 import com.sberg413.rickandmorty.models.NoSearchFilter
@@ -13,6 +15,7 @@ import com.sberg413.rickandmorty.repository.CharacterRepository
 import com.sberg413.rickandmorty.util.collectDataForTest
 import junit.framework.TestCase
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -124,6 +127,20 @@ class MainViewModelTest : TestCase() {
         verify(characterRepository, times(1)).getCharacterList(null, STATUS_ALIVE)
 
         collectJob.cancel()
+    }
+
+    @Test
+    fun testUpdateStateAfterUiClick() = runTest {
+
+        viewModel.characterClicked.test {
+            assertEquals(null, awaitItem()) // Initial value is null
+
+            viewModel.updateStateWithCharacterClicked(TEST_CHARACTER)
+
+            assertEquals(TEST_CHARACTER, awaitItem())
+
+            cancelAndIgnoreRemainingEvents()
+        }
     }
 
     companion object {

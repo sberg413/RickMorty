@@ -71,7 +71,9 @@ class MainViewModel @Inject constructor(private val characterRepository: Charact
     }
 
     fun updateStateWithCharacterClicked(character: Character?) {
-        _characterClicked.value = character
+        viewModelScope.launch {
+            _characterClicked.value = character
+        }
     }
 
     fun getSelectedStatusIndex(options: Array<String>): Int {

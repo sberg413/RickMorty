@@ -23,10 +23,6 @@ android {
         testInstrumentationRunner = "com.sberg413.rickandmorty.CustomTestRunner"
     }
 
-    dataBinding {
-        enable = true
-    }
-
     buildTypes {
         debug {
             // applicationIdSuffix = ".debug"
