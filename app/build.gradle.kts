@@ -2,12 +2,12 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kapt)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.navigation.safeargs)
     jacoco
+    alias(libs.plugins.kapt) // Moved last to prevent build warnings
 }
 
 android {
@@ -144,6 +144,12 @@ dependencies {
 
 kapt {
     correctErrorTypes = true
+    arguments {
+        arg("dagger.fastInit", "enabled")
+        arg("dagger.hilt.android.internal.disableAndroidSuperclassValidation", "true")
+        arg("dagger.hilt.android.internal.projectType", "ANDROID_APP")
+        arg("dagger.hilt.internal.useAggregatingRootProcessor", "true")
+    }
 }
 
 jacoco {
