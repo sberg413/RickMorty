@@ -183,7 +183,7 @@ private fun CharacterImage(url: String, name: String) {
 @Composable
 fun ShowErrorStateToast(errMsg: String) {
     val context = LocalContext.current
-    errMsg?.let {
+    errMsg.let {
         Toast.makeText(
             context,
             "ERROR: ${it}",
